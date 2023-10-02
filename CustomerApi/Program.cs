@@ -1,23 +1,27 @@
+using CustomerApi.Core.Models;
+using CustomerApi.Core.Services;
+using CustomerApi.Domain.Helpers;
+using CustomerApi.Domain.Repositories;
+using CustomerApi.Domain.Services;
+using CustomerApi.Infrastructure.EfCore;
+using CustomerApi.Infrastructure.EfCore.Repositories;
+using CustomerApi.Infrastructure.Messages;
 using Microsoft.EntityFrameworkCore;
-using OrderApi.Data;
-using OrderApi.Infrastructure;
 using SharedModels;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddDbContext<OrderApiContext>(opt => opt.UseInMemoryDatabase("OrdersDb"));
+builder.Services.AddDbContext<CustomerApiContext>(opt => opt.UseInMemoryDatabase("CustomerDB"));
 
-// Register repositories for dependency injection
-builder.Services.AddScoped<IRepository<Order>, OrderRepository>();
-
-// Register database initializer for dependency injection
 builder.Services.AddTransient<IDbInitializer, DbInitializer>();
 
-// Register MessagePublisher (a messaging gateway) for dependency injection
-builder.Services.AddSingleton<IMessagePublisher>(new
-    MessagePublisher(MessageHelper.ConnectionString));
+builder.Services.AddScoped<IRepository<Customer>, CustomerRepository>();
+
+builder.Services.AddScoped<ICustomerService, CustomerService>();
+
+builder.Services.AddSingleton<IConverter<Customer, CustomerDto>, CustomerConverter>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -33,20 +37,18 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-// Initialize the database.
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
-    var dbContext = services.GetService<OrderApiContext>();
+    var dbContext = services.GetService<CustomerApiContext>();
     var dbInitializer = services.GetService<IDbInitializer>();
     dbInitializer.Initialize(dbContext);
 }
 
-// Create a message listener in a separate thread.
 Task.Factory.StartNew(() =>
     new MessageListener(app.Services, MessageHelper.ConnectionString).Start());
 
-//app.UseHttpsRedirection();
+app.UseHttpsRedirection();
 
 app.UseAuthorization();
 

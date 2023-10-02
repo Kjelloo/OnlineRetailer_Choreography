@@ -6,9 +6,6 @@ using SharedModels;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// RabbitMQ connection string (see docker-compose.yml).
-string ConnectionString = "host=rabbitmq";
-
 // Add services to the container.
 
 builder.Services.AddDbContext<ProductApiContext>(opt => opt.UseInMemoryDatabase("ProductsDb"));
@@ -48,7 +45,7 @@ using (var scope = app.Services.CreateScope())
 
 // Create a message listener in a separate thread.
 Task.Factory.StartNew(() =>
-    new MessageListener(app.Services, ConnectionString).Start());
+    new MessageListener(app.Services, MessageHelper.ConnectionString).Start());
 
 //app.UseHttpsRedirection();
 
