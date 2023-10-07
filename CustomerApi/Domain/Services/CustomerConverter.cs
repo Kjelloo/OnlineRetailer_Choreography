@@ -1,6 +1,8 @@
 ﻿using CustomerApi.Core.Models;
 using CustomerApi.Core.Services;
+using CustomerApi.Domain.Helpers;
 using SharedModels;
+using SharedModels.Customer;
 
 namespace CustomerApi.Domain.Services;
 

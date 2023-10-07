@@ -1,6 +1,8 @@
 ﻿using EasyNetQ;
 using OrderApi.Domain.Repositories;
 using SharedModels;
+using SharedModels.Customer;
+using SharedModels.Order;
 
 namespace OrderApi.Infrastructure.Messages
 {
@@ -40,43 +42,47 @@ namespace OrderApi.Infrastructure.Messages
 
         private void HandleOrderAccepted(OrderAcceptedMessage message)
         {
-            using (var scope = provider.CreateScope())
+            using var scope = provider.CreateScope();
+            
+            var services = scope.ServiceProvider;
+            var orderRepos = services.GetService<IRepository<Order>>();
+
+            // Mark order as completed
+            var order = orderRepos.Get(message.OrderId);
+            order.Status = Order.OrderStatus.WaitingToBeShipped;
+            orderRepos.Edit(order);
+            
+            var customerOrderAcceptedMessage = new CustomerOrderAcceptedMessage
             {
-                var services = scope.ServiceProvider;
-                var orderRepos = services.GetService<IRepository<Order>>();
+                OrderId = message.OrderId,
+                CustomerId = order.CustomerId
+            };
 
-                // Mark order as completed
-                var order = orderRepos.Get(message.OrderId);
-                order.Status = Order.OrderStatus.completed;
-                orderRepos.Edit(order);
-
-                // Email a binding order confirmation
-                // (this part has not been implemented)
-            }
+            // Send accept message to customer service
+            bus.PubSub.Publish(customerOrderAcceptedMessage);
         }
 
         private void HandleOrderRejected(OrderRejectedMessage message)
         {
-            using (var scope = provider.CreateScope())
-            {
-                var services = scope.ServiceProvider;
-                var orderRepos = services.GetService<IRepository<Order>>();
+            using var scope = provider.CreateScope();
+            
+            var services = scope.ServiceProvider;
+            var orderRepos = services.GetService<IRepository<Order>>();
 
-                // Delete tentative order.
-                orderRepos.Remove(message.OrderId);
-            }
-
-            switch (message.Reason)
+            var order = orderRepos.Get(message.OrderId);
+                
+            var customerOrderRejectedMessage = new CustomerOrderRejectedMessage
             {
-                case OrderRejectReason.CustomerDoesNotExist:
-                    break;
-                case OrderRejectReason.CustomerCreditIsNotGoodEnough:
-                    break;
-                case OrderRejectReason.InsufficientStock:
-                    break;
-                default:
-                    throw new ArgumentException("Unknown reason for rejecting order");
-            }
+                OrderId = message.OrderId,
+                CustomerId = order.CustomerId,
+                OrderRejectReason = message.Reason
+            };
+
+            // Send reject message to customer service
+            bus.PubSub.Publish(customerOrderRejectedMessage);
+                
+            // Delete tentative order.
+            orderRepos.Remove(message.OrderId);
         }
     }
 }

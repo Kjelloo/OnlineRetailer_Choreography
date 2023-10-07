@@ -1,8 +1,16 @@
 using Microsoft.EntityFrameworkCore;
-using ProductApi.Data;
+using ProductApi.Core.Models;
+using ProductApi.Core.Services;
+using ProductApi.Domain.Helpers;
+using ProductApi.Domain.Repositories;
+using ProductApi.Domain.Services;
 using ProductApi.Infrastructure;
-using ProductApi.Models;
+using ProductApi.Infrastructure.EfCore;
+using ProductApi.Infrastructure.EfCore.Repositories;
+using ProductApi.Infrastructure.Messages;
 using SharedModels;
+using SharedModels.Helpers;
+using SharedModels.Product;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +20,8 @@ builder.Services.AddDbContext<ProductApiContext>(opt => opt.UseInMemoryDatabase(
 
 // Register repositories for dependency injection
 builder.Services.AddScoped<IRepository<Product>, ProductRepository>();
+
+builder.Services.AddScoped<IProductService, ProductService>();
 
 // Register database initializer for dependency injection
 builder.Services.AddTransient<IDbInitializer, DbInitializer>();

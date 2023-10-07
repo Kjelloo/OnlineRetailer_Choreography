@@ -1,7 +1,9 @@
 using CustomerApi.Core.Models;
 using CustomerApi.Core.Services;
+using CustomerApi.Domain.Helpers;
 using Microsoft.AspNetCore.Mvc;
 using SharedModels;
+using SharedModels.Customer;
 
 namespace CustomerApi.Controllers
 {

@@ -1,4 +1,5 @@
 ﻿using EasyNetQ;
+using SharedModels.Customer;
 
 namespace CustomerApi.Infrastructure.Messages;
 
@@ -18,8 +19,8 @@ public class MessageListener
     {
         using (bus = RabbitHutch.CreateBus(connectionString))
         {
-            //bus.SendReceive.Receive("customer.requests", x => x
-              //  .Add<CustomerExistsMessage>(HandleCustomerExistRequest));
+            bus.PubSub.Subscribe<CustomerOrderAcceptedMessage>("customerApiOrderAccepted", HandleCustomerOrderAccepted);
+            bus.PubSub.Subscribe<CustomerOrderRejectedMessage>("customerApiOrderRejected", HandleCustomerOrderRejected);
 
             // Block the thread so that it will not exit and stop subscribing.
             lock (this)
@@ -29,5 +30,14 @@ public class MessageListener
         }
 
     }
-    
+
+    private void HandleCustomerOrderRejected(CustomerOrderRejectedMessage message)
+    {
+        throw new NotImplementedException();
+    }
+
+    private void HandleCustomerOrderAccepted(CustomerOrderAcceptedMessage message)
+    {
+        throw new NotImplementedException();
+    }
 }

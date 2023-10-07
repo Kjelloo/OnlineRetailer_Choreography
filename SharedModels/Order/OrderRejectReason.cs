@@ -1,9 +1,11 @@
-﻿namespace SharedModels
+﻿namespace SharedModels.Order
 {
     public enum OrderRejectReason
     {
+        Unknown,
         CustomerDoesNotExist,
         CustomerCreditIsNotGoodEnough,
-        InsufficientStock,
+        CustomerOutstandingBills,
+        InsufficientStock
     }
 }

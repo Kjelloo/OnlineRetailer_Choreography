@@ -1,4 +1,4 @@
-﻿namespace SharedModels
+﻿namespace SharedModels.Helpers
 {
     public static class MessageHelper
     {

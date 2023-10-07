@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SharedModels;
+using SharedModels.Order;
 
 namespace OrderApi.Infrastructure.EfCore
 {

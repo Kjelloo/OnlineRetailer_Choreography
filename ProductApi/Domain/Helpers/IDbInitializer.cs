@@ -1,4 +1,6 @@
-﻿namespace ProductApi.Data
+﻿using ProductApi.Infrastructure.EfCore;
+
+namespace ProductApi.Domain.Helpers
 {
     public interface IDbInitializer
     {

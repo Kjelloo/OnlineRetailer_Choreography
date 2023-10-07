@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
-using ProductApi.Data;
-using ProductApi.Models;
+using ProductApi.Core.Models;
+using ProductApi.Domain.Repositories;
 using SharedModels;
+using SharedModels.Product;
 
 namespace ProductApi.Controllers
 {

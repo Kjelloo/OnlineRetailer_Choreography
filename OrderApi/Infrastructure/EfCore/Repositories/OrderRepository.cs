@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using OrderApi.Domain.Repositories;
 using SharedModels;
+using SharedModels.Order;
 
 namespace OrderApi.Infrastructure.EfCore.Repositories
 {

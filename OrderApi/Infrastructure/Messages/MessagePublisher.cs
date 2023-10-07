@@ -1,5 +1,6 @@
 ﻿using EasyNetQ;
 using SharedModels;
+using SharedModels.Order;
 
 namespace OrderApi.Infrastructure.Messages
 {

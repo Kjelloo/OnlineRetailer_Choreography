@@ -1,8 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using ProductApi.Models;
+﻿using ProductApi.Core.Models;
+using ProductApi.Infrastructure.EfCore;
 
-namespace ProductApi.Data
+namespace ProductApi.Domain.Helpers
 {
     public class DbInitializer : IDbInitializer
     {

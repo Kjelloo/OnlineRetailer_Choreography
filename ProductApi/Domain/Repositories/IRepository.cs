@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace ProductApi.Data
+﻿namespace ProductApi.Domain.Repositories
 {
     public interface IRepository<T>
     {

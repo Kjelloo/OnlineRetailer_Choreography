@@ -1,4 +1,4 @@
-﻿namespace ProductApi.Models
+﻿namespace ProductApi.Core.Models
 {
     public interface IConverter<T,U>
     {

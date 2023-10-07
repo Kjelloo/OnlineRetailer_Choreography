@@ -1,4 +1,5 @@
 ﻿using SharedModels;
+using SharedModels.Order;
 
 namespace OrderApi.Core.Services;
 

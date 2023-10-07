@@ -5,6 +5,8 @@ using OrderApi.Infrastructure.EfCore;
 using OrderApi.Infrastructure.EfCore.Repositories;
 using OrderApi.Infrastructure.Messages;
 using SharedModels;
+using SharedModels.Helpers;
+using SharedModels.Order;
 
 var builder = WebApplication.CreateBuilder(args);
 

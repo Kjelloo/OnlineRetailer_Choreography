@@ -1,6 +1,8 @@
-﻿using SharedModels;
+﻿using ProductApi.Core.Models;
+using SharedModels;
+using SharedModels.Product;
 
-namespace ProductApi.Models
+namespace ProductApi.Domain.Helpers
 {
     public class ProductConverter : IConverter<Product, ProductDto>
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace SharedModels
+namespace SharedModels.Order
 {
     public class Order
     {
@@ -13,11 +13,11 @@ namespace SharedModels
 
         public enum OrderStatus
         {
-            tentative,
-            cancelled,
-            completed,
-            shipped,
-            paid
+            Tentative,
+            Cancelled,
+            Completed,
+            WaitingToBeShipped,
+            Shipped
         }
         
         public override string ToString()
@@ -28,14 +28,14 @@ namespace SharedModels
 
     public class OrderLine
     {
-        public int id { get; set; }
+        public int Id { get; set; }
         public int OrderId { get; set; }
         public int ProductId { get; set; }
         public int Quantity { get; set; }
 
         public override string ToString()
         {
-            return $"OrderLine id: {id}, OrderId: {OrderId}, ProductId: {ProductId}, Quantity: {Quantity}";
+            return $"OrderLine id: {Id}, OrderId: {OrderId}, ProductId: {ProductId}, Quantity: {Quantity}";
         }
     }
 }
