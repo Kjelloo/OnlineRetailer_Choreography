@@ -55,6 +55,6 @@ public class OrderRepository : IOrderRepository
                                 where o.CustomerId == customerId
                                 select o;
 
-        return ordersForCustomer.ToList();
+        return ordersForCustomer.Include(o => o.OrderLines).ToList();
     }
 }

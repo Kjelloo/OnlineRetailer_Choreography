@@ -2,7 +2,8 @@
 {
     public static class RestConnectionHelper
     {
-        public static string GetProductUrl() => "http://localhost:5080/Customer/";
-        public static string GetCustomerUrl() => "http://localhost:6080/Products/";
+        public static string GetProductUrl() => "http://productapi:80/Products/";
+        public static string GetCustomerUrl() => "http://customerapi:80/Customers/";
+        public static string GetOrderUrl() => "http://orderapi:80/Orders/";
     }
 }

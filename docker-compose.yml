@@ -3,22 +3,55 @@ version: '3.4'
 services:
   productapi:
     image: ${DOCKER_REGISTRY-}productapi
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+    ports:
+      - "5080:80"
+    networks:
+      - retailerNetwork
     build:
       context: .
       dockerfile: ProductApi/Dockerfile
+    depends_on: 
+      - rabbitmq
 
   orderapi:
     image: ${DOCKER_REGISTRY-}orderapi
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+    ports:
+      - "7080:80"
+    networks:
+      - retailerNetwork
     build:
       context: .
       dockerfile: OrderApi/Dockerfile
+    depends_on:
+      - rabbitmq
+
   customerapi:
     image: ${DOCKER_REGISTRY-}customerapi
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+    ports:
+      - "6080:80"
+    networks:
+      - retailerNetwork
     build:
       context: .
       dockerfile: CustomerApi/Dockerfile
+    depends_on:
+      - rabbitmq
 
   rabbitmq:
     image: rabbitmq:3-management
+    networks: 
+      - retailerNetwork
     ports:
     - "15673:15672"
+
+networks:
+  retailerNetwork:

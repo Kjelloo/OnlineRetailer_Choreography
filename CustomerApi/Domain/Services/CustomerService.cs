@@ -1,7 +1,8 @@
 ﻿using CustomerApi.Core.Models;
 using CustomerApi.Core.Services;
+using RestSharp;
 using SharedModels;
-using SharedModels.Order;
+using SharedModels.Helpers;
 using SharedModels.Order.Models;
 
 namespace CustomerApi.Domain.Services;
@@ -9,10 +10,12 @@ namespace CustomerApi.Domain.Services;
 public class CustomerService : ICustomerService
 {
     private readonly IRepository<Customer> _repository;
+    private readonly RestClient _restClient;
 
     public CustomerService(IRepository<Customer> repository)
     {
         _repository = repository;
+        _restClient = new RestClient(RestConnectionHelper.GetOrderUrl());
     }
 
     public Customer Add(Customer entity)
@@ -54,9 +57,9 @@ public class CustomerService : ICustomerService
         return _repository.Remove(entity);
     }
     
-    public bool SufficientCredit(int id)
+    public bool SufficientCredit(int customerId)
     {
-        return Get(id).CreditStanding > 670;
+        return Get(customerId).CreditStanding > 670;
     }
 
     public void NotifyCustomer(int customerId, Order order, OrderRejectReason? reason)
@@ -80,11 +83,31 @@ public class CustomerService : ICustomerService
             case OrderStatus.Completed:
                 SendEmail(customer.Email, "Order completed", $"Your order {order.Id} was completed");
                 break;
+            case OrderStatus.Tentative:
+                break;
+            default:
+                throw new ArgumentException("Order status is not valid");
         }
     }
-
-    public void SendEmail(string email, string subject, string body)
+    private void SendEmail(string email, string subject, string body)
     {
         // Implement email sending
+        Console.WriteLine("Sending email to {0} with subject {1} and body {2}", email, subject, body);
+    }
+    
+    public bool OutstandingBills(int customerId)
+    {
+        // get customer - if customer does not exist, throw exception
+        Get(customerId);
+        
+        return GetCustomerOrders(customerId).Any(order => order.Status is not OrderStatus.Completed);
+    }
+
+    private IEnumerable<Order> GetCustomerOrders(int customerId)
+    {
+        var orderRequest = new RestRequest($"customerOrders/{customerId}");
+        var orderResponse = _restClient.GetAsync<IEnumerable<Order>>(orderRequest).Result;
+        
+        return orderResponse!;
     }
 }

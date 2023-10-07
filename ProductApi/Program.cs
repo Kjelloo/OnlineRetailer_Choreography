@@ -52,7 +52,7 @@ using (var scope = app.Services.CreateScope())
 
 // Create a message listener in a separate thread.
 Task.Factory.StartNew(() =>
-    new MessageListener(app.Services, MessageHelper.ConnectionString).Start());
+    new MessageListener(app.Services, MessageConnectionHelper.ConnectionString).Start());
 
 //app.UseHttpsRedirection();
 

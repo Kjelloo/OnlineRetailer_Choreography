@@ -25,39 +25,6 @@ namespace OrderApi.Controllers
             _service = service;
         }
         
-        [HttpGet("customerOrders/{customerId}")]
-        public IActionResult GetCustomerOrders(int customerId)
-        {
-            var orders = repository.GetByCustomer(customerId);
-            
-            if (orders == null)
-            {
-                return NotFound();
-            }
-            
-            return Ok(orders);
-        }
-
-        // GET orders
-        [HttpGet]
-        public IEnumerable<Order> Get()
-        {
-            return repository.GetAll();
-        }
-
-        // GET orders/5
-        [HttpGet("{id}", Name = "GetOrder")]
-        public IActionResult Get(int id)
-        {
-            var item = repository.Get(id);
-            if (item == null)
-            {
-                return NotFound();
-            }
-            
-            return new ObjectResult(item);
-        }
-
         // POST orders
         [HttpPost]
         public IActionResult Post([FromBody]Order order)
@@ -79,6 +46,39 @@ namespace OrderApi.Controllers
             {
                 return BadRequest(e.Message);
             }
+        }
+        
+        // GET orders
+        [HttpGet]
+        public IEnumerable<Order> Get()
+        {
+            return repository.GetAll();
+        }
+
+        // GET orders/5
+        [HttpGet("{id}", Name = "GetOrder")]
+        public IActionResult Get(int id)
+        {
+            var item = repository.Get(id);
+            if (item == null)
+            {
+                return NotFound();
+            }
+            
+            return new ObjectResult(item);
+        }
+        
+        [HttpGet("customerOrders/{customerId}")]
+        public IActionResult GetCustomerOrders(int customerId)
+        {
+            var orders = repository.GetByCustomer(customerId);
+            
+            if (orders == null)
+            {
+                return NotFound();
+            }
+            
+            return Ok(orders);
         }
         
         // PUT orders/5/cancel

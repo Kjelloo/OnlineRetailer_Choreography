@@ -1,6 +1,4 @@
 ﻿using OrderApi.Infrastructure.EfCore;
-using SharedModels;
-using SharedModels.Order;
 using SharedModels.Order.Models;
 
 namespace OrderApi.Domain.Helpers
@@ -24,8 +22,16 @@ namespace OrderApi.Domain.Helpers
                 new Order {
                     Date = DateTime.Today,
                     CustomerId = 1,
+                    Status = OrderStatus.Completed,
                     OrderLines = new List<OrderLine>{
                         new OrderLine { ProductId = 1, Quantity = 2 } }
+                },
+                new Order {
+                    Date = DateTime.Today-TimeSpan.FromDays(1),
+                    CustomerId = 1,
+                    Status = OrderStatus.Completed,
+                    OrderLines = new List<OrderLine>{
+                        new OrderLine { ProductId = 2, Quantity = 2 } }
                 }
             };
 

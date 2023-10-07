@@ -1,74 +1,84 @@
 using CustomerApi.Core.Models;
 using CustomerApi.Core.Services;
-using CustomerApi.Domain.Helpers;
 using Microsoft.AspNetCore.Mvc;
-using SharedModels;
 using SharedModels.Customer;
 
-namespace CustomerApi.Controllers
+namespace CustomerApi.Controllers;
+
+[Route("[controller]")]
+[ApiController]
+public class CustomersController : ControllerBase
 {
-    [Route("[controller]")]
-    [ApiController]
-    public class CustomersController : ControllerBase
+    private readonly ICustomerService _service;
+    private readonly IConverter<Customer, CustomerDto> _converter;
+
+    public CustomersController( IConverter<Customer, CustomerDto> converter, ICustomerService service)
     {
-        private readonly ICustomerService _service;
-        private readonly IConverter<Customer, CustomerDto> _converter;
+        _converter = converter;
+        _service = service;
+    }
 
-        public CustomersController( IConverter<Customer, CustomerDto> converter, ICustomerService service)
+    [HttpPost]
+    public ActionResult Post([FromBody] CustomerDto customerDto)
+    {
+        try
         {
-            _converter = converter;
-            _service = service;
+            var newCustomer = _service.Add(_converter.Convert(customerDto));
+            
+            return Created($"Created customer {newCustomer.Name}", newCustomer);
         }
-
-        [HttpPost]
-        public ActionResult Post([FromBody] CustomerDto customerDto)
+        catch (ArgumentException e)
         {
-            try
-            {
-                var newCustomer = _service.Add(_converter.Convert(customerDto));
-                
-                return Created($"Created customer {newCustomer.Name}", newCustomer);
-            }
-            catch (ArgumentException)
-            {
-                return BadRequest("Customer is missing required fields");
-            }
+            return BadRequest("Customer is missing required fields: " + e.Message);
         }
-        
-        [HttpGet("credit/{id}")]
-        public ActionResult<bool> GetCustomerSufficientCredit(int id)
+    }
+    
+    [HttpGet("{id}")]
+    public ActionResult<Customer> Get(int id)
+    {
+        try
         {
-            try
-            {
-                var credit = _service.SufficientCredit(id);
-                
-                return Ok(credit);
-            }
-            catch (Exception)
-            {
-                return NotFound("Customer not found");
-            }
+            var customer = _service.Get(id);
+            
+            return Ok(customer);
         }
-        
-        [HttpGet("{id}")]
-        public ActionResult<Customer> Get(int id)
+        catch (Exception e)
         {
-            try
-            {
-                var customer = _service.Get(id);
-                
-                return Ok(customer);
-            }
-            catch (Exception)
-            {
-                return NotFound("Customer not found");
-            }
+            return NotFound(e.Message);
         }
-        
-        [HttpGet]
-        public ActionResult<IEnumerable<Customer>> Get()
+    }
+    
+    [HttpGet]
+    public ActionResult<IEnumerable<Customer>> Get()
+    {
+        return Ok(_service.GetAll());
+    }
+    
+    [HttpGet("credit/{id}")]
+    public ActionResult<bool> GetCustomerSufficientCredit(int id)
+    {
+        try
         {
-            return Ok(_service.GetAll());
+            var credit = _service.SufficientCredit(id);
+            
+            return Ok(credit);
+        }
+        catch (Exception e)
+        {
+            return NotFound(e.Message);
+        }
+    }
+    
+    [HttpGet("bills/{id}")]
+    public ActionResult<bool> GetCustomerOutstandingBills(int id)
+    {
+        try
+        {
+            return Ok(_service.OutstandingBills(id));
+        }
+        catch (Exception e)
+        {
+            return NotFound(e.Message);
         }
     }
 }

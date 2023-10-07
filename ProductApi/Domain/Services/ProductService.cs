@@ -4,7 +4,6 @@ using RestSharp;
 using SharedModels;
 using SharedModels.Customer;
 using SharedModels.Helpers;
-using SharedModels.Order;
 using SharedModels.Order.Messages;
 using SharedModels.Order.Models;
 
@@ -58,6 +57,7 @@ public class ProductService : IProductService
     {
         var orderAccepted = true;
         var orderRejected = OrderRejectReason.Unknown;
+        
         // Check if customer exists
         var customerExistRequest = new RestRequest(orderCreatedMessage.CustomerId.ToString());
         var customerExistResponse = _customerClient.GetAsync<CustomerDto>(customerExistRequest).Result;

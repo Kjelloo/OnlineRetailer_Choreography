@@ -7,7 +7,7 @@ namespace CustomerApi.Core.Services;
 
 public interface ICustomerService : IService<Customer>
 {
-    bool SufficientCredit(int id);
+    bool SufficientCredit(int customerId);
     void NotifyCustomer(int customerId, Order order, OrderRejectReason? reason);
-    void SendEmail(string email, string subject, string body);
+    bool OutstandingBills(int customerId);
 }
