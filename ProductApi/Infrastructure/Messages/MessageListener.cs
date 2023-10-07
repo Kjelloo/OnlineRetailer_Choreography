@@ -1,7 +1,6 @@
 ﻿using EasyNetQ;
 using ProductApi.Core.Models;
 using ProductApi.Core.Services;
-using ProductApi.Domain.Repositories;
 using RestSharp;
 using SharedModels.Customer;
 using SharedModels.Helpers;
@@ -28,6 +27,8 @@ public class MessageListener
 
     public void Start()
     {
+        // Wait for RabbitMQ to start
+        Thread.Sleep(5000);
         using (bus = RabbitHutch.CreateBus(connectionString))
         {
             bus.PubSub.Subscribe<OrderCreatedMessage>("productApiHkCreated", 

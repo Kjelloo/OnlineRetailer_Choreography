@@ -1,4 +1,5 @@
 ﻿using ProductApi.Core.Models;
+using ProductApi.Core.Services;
 using SharedModels;
 using SharedModels.Product;
 

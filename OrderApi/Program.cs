@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
+using OrderApi.Core.Services;
 using OrderApi.Domain.Helpers;
 using OrderApi.Domain.Repositories;
+using OrderApi.Domain.Services;
 using OrderApi.Infrastructure.EfCore;
 using OrderApi.Infrastructure.EfCore.Repositories;
 using OrderApi.Infrastructure.Messages;
@@ -15,7 +17,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<OrderApiContext>(opt => opt.UseInMemoryDatabase("OrdersDb"));
 
 // Register repositories for dependency injection
-builder.Services.AddScoped<IRepository<Order>, OrderRepository>();
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+
+builder.Services.AddScoped<IOrderService, OrderService>();
 
 // Register database initializer for dependency injection
 builder.Services.AddTransient<IDbInitializer, DbInitializer>();

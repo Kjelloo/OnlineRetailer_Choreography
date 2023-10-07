@@ -15,11 +15,11 @@ namespace OrderApi.Controllers
         IMessagePublisher messagePublisher;
         private readonly IOrderService _service;
 
-        public OrdersController(IRepository<Order> repos,
+        public OrdersController(IOrderRepository repos,
             IMessagePublisher publisher,
             IOrderService service)
         {
-            repository = repos as IOrderRepository;
+            repository = repos;
             messagePublisher = publisher;
             _service = service;
         }
@@ -68,7 +68,7 @@ namespace OrderApi.Controllers
             
             try
             {
-                var newOrder = _service.Create(order);
+                var newOrder = _service.Add(order);
 
                 // Return a non-binding order confirmation immediately.
                 // (an email will be sent when the order status becomes complete)
@@ -98,7 +98,6 @@ namespace OrderApi.Controllers
         public IActionResult Ship(int id)
         {
             throw new NotImplementedException();
-
             // Add code to implement this method.
         }
 
@@ -109,7 +108,6 @@ namespace OrderApi.Controllers
         public IActionResult Pay(int id)
         {
             throw new NotImplementedException();
-
             // Add code to implement this method.
         }
 

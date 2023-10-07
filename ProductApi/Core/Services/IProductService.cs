@@ -1,13 +1,11 @@
 ﻿using ProductApi.Core.Models;
+using SharedModels;
 using SharedModels.Order;
 
 namespace ProductApi.Core.Services;
 
-public interface IProductService
+public interface IProductService : IService<Product>
 {
-    Product Create(Product product);
-    Product Find(int id);
-    IEnumerable<Product> FindAll();
     Dictionary<bool, OrderRejectReason> IsOrderValid(OrderCreatedMessage orderCreatedMessage);
     void ReserveProduct(IEnumerable<OrderLine> orderLines);
 }

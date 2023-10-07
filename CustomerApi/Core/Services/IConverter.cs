@@ -1,4 +1,4 @@
-﻿namespace CustomerApi.Domain.Helpers;
+﻿namespace CustomerApi.Core.Services;
 
 public interface IConverter<T, U>
 {

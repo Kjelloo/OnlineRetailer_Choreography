@@ -7,14 +7,14 @@ using SharedModels.Customer;
 
 namespace CustomerApi.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
-    public class CustomerController : ControllerBase
+    public class CustomersController : ControllerBase
     {
         private readonly ICustomerService _service;
         private readonly IConverter<Customer, CustomerDto> _converter;
 
-        public CustomerController( IConverter<Customer, CustomerDto> converter, ICustomerService service)
+        public CustomersController( IConverter<Customer, CustomerDto> converter, ICustomerService service)
         {
             _converter = converter;
             _service = service;
@@ -29,7 +29,7 @@ namespace CustomerApi.Controllers
                 
                 return Created($"Created customer {newCustomer.Name}", newCustomer);
             }
-            catch (ArgumentException e)
+            catch (ArgumentException)
             {
                 return BadRequest("Customer is missing required fields");
             }
@@ -55,7 +55,7 @@ namespace CustomerApi.Controllers
         {
             try
             {
-                var customer = _service.Find(id);
+                var customer = _service.Get(id);
                 
                 return Ok(customer);
             }
@@ -68,7 +68,7 @@ namespace CustomerApi.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<Customer>> Get()
         {
-            return Ok(_service.FindAll());
+            return Ok(_service.GetAll());
         }
     }
 }

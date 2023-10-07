@@ -2,9 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using ProductApi.Core.Models;
 using ProductApi.Core.Services;
 using ProductApi.Domain.Helpers;
-using ProductApi.Domain.Repositories;
 using ProductApi.Domain.Services;
-using ProductApi.Infrastructure;
 using ProductApi.Infrastructure.EfCore;
 using ProductApi.Infrastructure.EfCore.Repositories;
 using ProductApi.Infrastructure.Messages;
@@ -28,7 +26,6 @@ builder.Services.AddTransient<IDbInitializer, DbInitializer>();
 
 // Register ProductConverter for dependency injection
 builder.Services.AddSingleton<IConverter<Product, ProductDto>, ProductConverter>();
-
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

@@ -1,5 +1,4 @@
 ﻿using CustomerApi.Core.Models;
-using CustomerApi.Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
 using SharedModels;
 
@@ -31,16 +30,18 @@ public class CustomerRepository : IRepository<Customer>
         return db.Customers;
     }
 
-    public void Update(Customer entity)
+    public Customer Edit(Customer entity)
     {
         db.Entry(entity).State = EntityState.Modified;
         db.SaveChanges();
+        return entity;
     }
 
-    public void Delete(Customer entity)
+    public Customer Remove(Customer customer)
     {
-        var product = db.Customers.FirstOrDefault(entity);
-        db.Customers.Remove(product);
+        var customerRemove = db.Customers.FirstOrDefault(customer);
+        db.Customers.Remove(customerRemove);
         db.SaveChanges();
+        return customerRemove;
     }
 }

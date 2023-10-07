@@ -1,7 +1,7 @@
 ﻿using ProductApi.Core.Models;
 using ProductApi.Core.Services;
-using ProductApi.Domain.Repositories;
 using RestSharp;
+using SharedModels;
 using SharedModels.Customer;
 using SharedModels.Helpers;
 using SharedModels.Order;
@@ -19,7 +19,7 @@ public class ProductService : IProductService
         _customerClient = new RestClient(RestConnectionHelper.GetCustomerUrl()); 
     }
 
-    public Product Create(Product product)
+    public Product Add(Product product)
     {
         if (product.Name == null || product.Price == 0 || product.ItemsInStock == -1 || product.ItemsReserved == -1)
             throw new ArgumentException("Product must not be null");
@@ -27,7 +27,7 @@ public class ProductService : IProductService
         return _productRepository.Add(product);
     }
 
-    public Product Find(int id)
+    public Product Get(int id)
     {
         var product = _productRepository.Get(id);
         
@@ -37,9 +37,19 @@ public class ProductService : IProductService
         return product;
     }
 
-    public IEnumerable<Product> FindAll()
+    public IEnumerable<Product> GetAll()
     {
         return _productRepository.GetAll();
+    }
+
+    public Product Edit(Product entity)
+    {
+        return _productRepository.Edit(entity);
+    }
+
+    public Product Remove(Product entity)
+    {
+        return _productRepository.Remove(entity);
     }
 
     public Dictionary<bool, OrderRejectReason> IsOrderValid(OrderCreatedMessage orderCreatedMessage)
@@ -107,7 +117,7 @@ public class ProductService : IProductService
     {
         foreach (var orderLine in orderLines)
         {
-            var product = Find(orderLine.ProductId);
+            var product = Get(orderLine.ProductId);
             product.ItemsReserved += orderLine.Quantity;
             _productRepository.Edit(product);
         }

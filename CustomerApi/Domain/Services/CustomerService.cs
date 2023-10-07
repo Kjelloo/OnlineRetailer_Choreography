@@ -1,6 +1,5 @@
 ﻿using CustomerApi.Core.Models;
 using CustomerApi.Core.Services;
-using CustomerApi.Domain.Repositories;
 using SharedModels;
 
 namespace CustomerApi.Domain.Services;
@@ -14,19 +13,24 @@ public class CustomerService : ICustomerService
         _repository = repository;
     }
 
-    public Customer Add(Customer customer)
+    public Customer Add(Customer entity)
     {
-        if (customer.Email is "" or null || customer.Name is "" or null || customer.Phone is 0 
-            || customer.BillingAddress is "" or null || customer.ShippingAddress is "" or null 
-            || customer.CreditStanding is 0)
+        if (entity.Email is "" or null || entity.Name is "" or null || entity.Phone is 0 
+            || entity.BillingAddress is "" or null || entity.ShippingAddress is "" or null 
+            || entity.CreditStanding is 0)
         {
             throw new ArgumentException("Customer is missing required fields");
         }
         
-        return _repository.Add(customer);
+        return _repository.Add(entity);
     }
 
-    public Customer Find(int id)
+    public IEnumerable<Customer> GetAll()
+    {
+        return _repository.GetAll();
+    }
+
+    public Customer Get(int id)
     {
         var customer = _repository.Get(id);
 
@@ -38,13 +42,18 @@ public class CustomerService : ICustomerService
         return _repository.Get(id);
     }
 
+    public Customer Edit(Customer entity)
+    {
+        return _repository.Edit(entity);
+    }
+    
+    public Customer Remove(Customer entity)
+    {
+        return _repository.Remove(entity);
+    }
+    
     public bool SufficientCredit(int id)
     {
-        return _repository.Get(id).CreditStanding > 670;
-    }
-
-    public IEnumerable<Customer> FindAll()
-    {
-        return _repository.GetAll();
+        return Get(id).CreditStanding > 670;
     }
 }

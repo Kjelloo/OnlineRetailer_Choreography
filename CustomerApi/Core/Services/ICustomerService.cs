@@ -3,10 +3,7 @@ using SharedModels;
 
 namespace CustomerApi.Core.Services;
 
-public interface ICustomerService
+public interface ICustomerService : IService<Customer>
 {
-    Customer Add(Customer customer);
-    Customer Find(int id);
     bool SufficientCredit(int id);
-    IEnumerable<Customer> FindAll();
 }

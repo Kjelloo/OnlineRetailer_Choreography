@@ -1,9 +1,7 @@
-﻿using System.Net;
-using OrderApi.Core.Services;
+﻿using OrderApi.Core.Services;
 using OrderApi.Domain.Repositories;
 using OrderApi.Infrastructure.Messages;
 using RestSharp;
-using SharedModels;
 using SharedModels.Helpers;
 using SharedModels.Order;
 
@@ -11,22 +9,20 @@ namespace OrderApi.Domain.Services;
 
 public class OrderService : IOrderService
 {
-    private readonly MessageListener _messageListener;
     private readonly IMessagePublisher _messagePublisher;
     private readonly IOrderRepository _repository;
     private RestClient customerClient;
     private RestClient productClient;
 
-    public OrderService(IOrderRepository repository, IMessagePublisher messagePublisher, MessageListener messageListener)
+    public OrderService(IOrderRepository repository, IMessagePublisher messagePublisher)
     {
-        _messageListener = messageListener;
         _messagePublisher = messagePublisher;
         _repository = repository;
         customerClient = new RestClient(RestConnectionHelper.GetCustomerUrl());
         productClient = new RestClient(RestConnectionHelper.GetProductUrl());
     }
 
-    public Order Create(Order order)
+    public Order Add(Order order)
     {
         // Create a tentative order.
         order.Status = Order.OrderStatus.Tentative;
@@ -39,14 +35,24 @@ public class OrderService : IOrderService
         return newOrder;
     }
 
-    public Order Find(int id)
+    public Order Get(int id)
     {
-        throw new NotImplementedException();
+        return _repository.Get(id);
     }
 
-    public IEnumerable<Order> FindAll()
+    public IEnumerable<Order> GetAll()
     {
-        throw new NotImplementedException();
+        return _repository.GetAll();
+    }
+
+    public Order Edit(Order entity)
+    {
+        return _repository.Edit(entity);
+    }
+
+    public Order Remove(Order entity)
+    {
+        return _repository.Remove(entity);
     }
 
     public IEnumerable<Order> FindByCustomer(int customerId)

@@ -3,11 +3,8 @@ using SharedModels.Order;
 
 namespace OrderApi.Core.Services;
 
-public interface IOrderService
+public interface IOrderService : IService<Order>
 {
-    Order Create(Order order);
-    Order Find(int id);
-    IEnumerable<Order> FindAll();
     IEnumerable<Order> FindByCustomer(int customerId);
     Order Cancel();
     Order Ship();

@@ -10,6 +10,8 @@ namespace OrderApi.Infrastructure.Messages
 
         public MessagePublisher(string connectionString)
         {
+            // Wait for RabbitMQ to start
+            Thread.Sleep(5000);
             bus = RabbitHutch.CreateBus(connectionString);
         }
 

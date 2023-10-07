@@ -1,7 +1,6 @@
 using CustomerApi.Core.Models;
 using CustomerApi.Core.Services;
 using CustomerApi.Domain.Helpers;
-using CustomerApi.Domain.Repositories;
 using CustomerApi.Domain.Services;
 using CustomerApi.Infrastructure.EfCore;
 using CustomerApi.Infrastructure.EfCore.Repositories;

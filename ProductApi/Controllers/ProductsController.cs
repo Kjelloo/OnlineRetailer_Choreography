@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using ProductApi.Core.Models;
-using ProductApi.Domain.Repositories;
+using ProductApi.Core.Services;
 using SharedModels;
 using SharedModels.Product;
 
@@ -91,12 +91,13 @@ namespace ProductApi.Controllers
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
-            if (repository.Get(id) == null)
+            var product = repository.Get(id);
+            if (product == null)
             {
                 return NotFound();
             }
 
-            repository.Remove(id);
+            repository.Remove(product);
             return new NoContentResult();
         }
     }

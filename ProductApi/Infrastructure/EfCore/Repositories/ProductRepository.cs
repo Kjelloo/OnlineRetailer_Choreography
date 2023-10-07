@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ProductApi.Core.Models;
-using ProductApi.Domain.Repositories;
+using SharedModels;
 
 namespace ProductApi.Infrastructure.EfCore.Repositories;
 
@@ -30,16 +30,18 @@ public class ProductRepository : IRepository<Product>
         return db.Products.FirstOrDefault(p => p.Id == id);
     }
     
-    public void Edit(Product entity)
+    public Product Edit(Product entity)
     {
         db.Entry(entity).State = EntityState.Modified;
         db.SaveChanges();
+        return entity;
     }
-
-    public void Remove(int id)
+    
+    public Product Remove(Product entity)
     {
-        var product = db.Products.FirstOrDefault(p => p.Id == id);
+        var product = db.Products.FirstOrDefault(entity);
         db.Products.Remove(product);
         db.SaveChanges();
+        return product;
     }
 }

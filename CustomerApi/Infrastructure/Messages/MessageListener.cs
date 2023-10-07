@@ -17,6 +17,7 @@ public class MessageListener
     
     public void Start()
     {
+        Thread.Sleep(5000);
         using (bus = RabbitHutch.CreateBus(connectionString))
         {
             bus.PubSub.Subscribe<CustomerOrderAcceptedMessage>("customerApiOrderAccepted", HandleCustomerOrderAccepted);
