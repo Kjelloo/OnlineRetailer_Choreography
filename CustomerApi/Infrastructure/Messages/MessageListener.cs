@@ -6,25 +6,26 @@ namespace CustomerApi.Infrastructure.Messages;
 
 public class MessageListener
 {
-    private readonly IServiceProvider _provider;
     private readonly string _connectionString;
+    private readonly IServiceProvider _provider;
     private IBus _bus;
-    
+
     public MessageListener(IServiceProvider provider, string connectionString)
     {
         _provider = provider;
         _connectionString = connectionString;
     }
-    
+
     public void Start()
     {
         // Wait for RabbitMQ to start
-        Thread.Sleep(15000);
+        Thread.Sleep(5000);
         using (_bus = RabbitHutch.CreateBus(_connectionString))
         {
             // Handle rejected orders
-            _bus.PubSub.Subscribe<CustomerOrderRejectedMessage>("customerApiOrderRejected", HandleCustomerOrderRejected);
-            
+            _bus.PubSub.Subscribe<CustomerOrderRejectedMessage>("customerApiOrderRejected",
+                HandleCustomerOrderRejected);
+
             // Handle updated orders
             _bus.PubSub.Subscribe<CustomerOrderUpdatedMessage>("customerApiOrderUpdated", HandleCustomerOrderUpdated);
 
@@ -39,20 +40,20 @@ public class MessageListener
     private void HandleCustomerOrderUpdated(CustomerOrderUpdatedMessage message)
     {
         using var scope = _provider.CreateScope();
-        
+
         var service = scope.ServiceProvider;
         var customerService = service.GetService<ICustomerService>();
-        
+
         customerService.NotifyCustomer(message.CustomerId, message.Order, null);
     }
 
     private void HandleCustomerOrderRejected(CustomerOrderRejectedMessage message)
     {
         using var scope = _provider.CreateScope();
-        
+
         var service = scope.ServiceProvider;
         var customerService = service.GetService<ICustomerService>();
-        
+
         customerService.NotifyCustomer(message.CustomerId, message.Order, message.OrderRejectReason);
     }
 }

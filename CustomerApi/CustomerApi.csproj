@@ -8,27 +8,31 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="EasyNetQ" Version="7.5.5" />
+        <PackageReference Include="EasyNetQ" Version="7.5.5"/>
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.11"/>
-        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.11" />
-        <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="7.0.11" />
-        <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="7.0.10" />
-        <PackageReference Include="RestSharp" Version="110.2.0" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.11"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="7.0.11"/>
+        <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="7.0.10"/>
+        <PackageReference Include="RestSharp" Version="110.2.0"/>
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0"/>
     </ItemGroup>
 
     <ItemGroup>
-      <Content Include="..\.dockerignore">
-        <Link>.dockerignore</Link>
-      </Content>
+        <Content Include="..\.dockerignore">
+            <Link>.dockerignore</Link>
+        </Content>
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Controllers\" />
+        <Folder Include="Controllers\"/>
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\SharedModels\SharedModels.csproj" />
+        <ProjectReference Include="..\SharedModels\SharedModels.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Remove="Properties\launchSettings.json"/>
     </ItemGroup>
 
 </Project>

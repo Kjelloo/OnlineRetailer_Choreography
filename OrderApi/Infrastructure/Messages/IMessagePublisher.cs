@@ -1,10 +1,9 @@
 ﻿using OrderApi.Core.Models;
 
-namespace OrderApi.Infrastructure.Messages
+namespace OrderApi.Infrastructure.Messages;
+
+public interface IMessagePublisher
 {
-    public interface IMessagePublisher
-    {
-        void PublishOrderCreatedMessage(int? customerId, int orderId,
-            IList<OrderLine> orderLines);
-    }
+    void PublishOrderCreatedMessage(int? customerId, int orderId,
+        IList<OrderLine> orderLines);
 }

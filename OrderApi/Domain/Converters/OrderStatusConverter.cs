@@ -36,7 +36,7 @@ public class OrderStatusConverter : IConverter<OrderStatus, OrderStatusDto>
             case OrderStatus.Tentative:
                 return OrderStatusDto.Tentative;
         }
-        
+
         return default;
     }
 }

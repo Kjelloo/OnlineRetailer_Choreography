@@ -7,12 +7,13 @@ using SharedModels.Order.Dtos;
 using SharedModels.Order.Messages;
 
 namespace OrderApi.Infrastructure.Messages;
+
 public class MessageListener
 {
-    private readonly IServiceProvider _provider;
     private readonly string _connectionString;
-    private IConverter<Order, OrderDto> _orderConverter;
+    private readonly IServiceProvider _provider;
     private IBus _bus;
+    private IConverter<Order, OrderDto> _orderConverter;
 
     // The service provider is passed as a parameter, because the class needs
     // access to the product repository. With the service provider, we can create
@@ -26,7 +27,7 @@ public class MessageListener
     public void Start()
     {
         // Wait for RabbitMQ to start
-        Thread.Sleep(15000);
+        Thread.Sleep(5000);
         using (_bus = RabbitHutch.CreateBus(_connectionString))
         {
             _bus.PubSub.Subscribe<OrderAcceptedMessage>("orderApiHkAccepted",
@@ -48,14 +49,14 @@ public class MessageListener
         using var scope = _provider.CreateScope();
         var services = scope.ServiceProvider;
         _orderConverter = services.GetService<IConverter<Order, OrderDto>>();
-        
+
         var orderRepos = services.GetService<IOrderService>();
 
         // Mark order as completed
         var order = orderRepos.Get(message.OrderId);
         order.Status = OrderStatus.WaitingToBeShipped;
         orderRepos.Edit(order);
-        
+
         var customerOrderAcceptedMessage = new CustomerOrderUpdatedMessage
         {
             Order = _orderConverter.Convert(order),
@@ -69,12 +70,12 @@ public class MessageListener
     private void HandleOrderRejected(OrderRejectedMessage message)
     {
         using var scope = _provider.CreateScope();
-        
+
         var services = scope.ServiceProvider;
         var orderRepos = services.GetService<IOrderService>();
 
         var order = orderRepos.Get(message.OrderId);
-            
+
         var customerOrderRejectedMessage = new CustomerOrderRejectedMessage
         {
             Order = _orderConverter.Convert(order),
@@ -84,9 +85,8 @@ public class MessageListener
 
         // Send reject message to customer service
         _bus.PubSub.Publish(customerOrderRejectedMessage);
-            
+
         // Delete tentative order.
         orderRepos.Remove(order);
     }
 }
-

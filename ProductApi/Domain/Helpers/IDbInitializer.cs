@@ -1,9 +1,8 @@
 ﻿using ProductApi.Infrastructure.EfCore;
 
-namespace ProductApi.Domain.Helpers
+namespace ProductApi.Domain.Helpers;
+
+public interface IDbInitializer
 {
-    public interface IDbInitializer
-    {
-        void Initialize(ProductApiContext context);
-    }
+    void Initialize(ProductApiContext context);
 }

@@ -1,9 +1,8 @@
 ﻿using OrderApi.Infrastructure.EfCore;
 
-namespace OrderApi.Domain.Helpers
+namespace OrderApi.Domain.Helpers;
+
+public interface IDbInitializer
 {
-    public interface IDbInitializer
-    {
-        void Initialize(OrderApiContext context);
-    }
+    void Initialize(OrderApiContext context);
 }

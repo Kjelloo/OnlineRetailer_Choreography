@@ -21,11 +21,11 @@ public class OrderService : IOrderService
         // Create a tentative order.
         order.Status = OrderStatus.Tentative;
         var newOrder = _repository.Add(order);
-        
+
         // Publish OrderStatusChangedMessage. 
         _messagePublisher.PublishOrderCreatedMessage(
             newOrder.CustomerId, newOrder.Id, newOrder.OrderLines);
-        
+
         return newOrder;
     }
 

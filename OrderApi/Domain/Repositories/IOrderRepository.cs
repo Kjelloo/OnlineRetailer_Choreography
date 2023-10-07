@@ -1,10 +1,9 @@
 ﻿using OrderApi.Core.Models;
 using SharedModels;
 
-namespace OrderApi.Domain.Repositories
+namespace OrderApi.Domain.Repositories;
+
+public interface IOrderRepository : IRepository<Order>
 {
-    public interface IOrderRepository : IRepository<Order>
-    {
-        IEnumerable<Order> GetByCustomer(int customerId);
-    }
+    IEnumerable<Order> GetByCustomer(int customerId);
 }

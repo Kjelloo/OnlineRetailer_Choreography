@@ -10,7 +10,7 @@ namespace SharedModels.Order.Dtos
         public int CustomerId { get; set; }
         public OrderStatusDto Status { get; set; }
         public IList<OrderLineDto> OrderLines { get; set; }
-        
+
         public override string ToString()
         {
             return $"Order id: {Id}, Date: {Date}, customerId: {CustomerId}, Status: {Status}";

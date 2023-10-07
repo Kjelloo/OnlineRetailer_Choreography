@@ -2,32 +2,31 @@
 using SharedModels;
 using SharedModels.Product;
 
-namespace ProductApi.Domain.Services
-{
-    public class ProductConverter : IConverter<Product, ProductDto>
-    {
-        public Product Convert(ProductDto sharedProduct)
-        {
-            return new Product
-            {
-                Id = sharedProduct.Id,
-                Name = sharedProduct.Name,
-                Price = sharedProduct.Price,
-                ItemsInStock = sharedProduct.ItemsInStock,
-                ItemsReserved = sharedProduct.ItemsReserved
-            };
-        }
+namespace ProductApi.Domain.Services;
 
-        public ProductDto Convert(Product hiddenProduct)
+public class ProductConverter : IConverter<Product, ProductDto>
+{
+    public Product Convert(ProductDto sharedProduct)
+    {
+        return new Product
         {
-            return new ProductDto
-            {
-                Id = hiddenProduct.Id,
-                Name = hiddenProduct.Name,
-                Price = hiddenProduct.Price,
-                ItemsInStock = hiddenProduct.ItemsInStock,
-                ItemsReserved = hiddenProduct.ItemsReserved
-            };
-        }
+            Id = sharedProduct.Id,
+            Name = sharedProduct.Name,
+            Price = sharedProduct.Price,
+            ItemsInStock = sharedProduct.ItemsInStock,
+            ItemsReserved = sharedProduct.ItemsReserved
+        };
+    }
+
+    public ProductDto Convert(Product hiddenProduct)
+    {
+        return new ProductDto
+        {
+            Id = hiddenProduct.Id,
+            Name = hiddenProduct.Name,
+            Price = hiddenProduct.Price,
+            ItemsInStock = hiddenProduct.ItemsInStock,
+            ItemsReserved = hiddenProduct.ItemsReserved
+        };
     }
 }

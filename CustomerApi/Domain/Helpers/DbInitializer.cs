@@ -1,7 +1,5 @@
-﻿using System.Collections;
-using CustomerApi.Core.Models;
+﻿using CustomerApi.Core.Models;
 using CustomerApi.Infrastructure.EfCore;
-using SharedModels;
 
 namespace CustomerApi.Domain.Helpers;
 
@@ -12,7 +10,7 @@ public class DbInitializer : IDbInitializer
         context.Database.EnsureDeleted();
         context.Database.EnsureCreated();
 
-        List<Customer> customers = new List<Customer>
+        var customers = new List<Customer>
         {
             new()
             {
@@ -25,7 +23,7 @@ public class DbInitializer : IDbInitializer
                 CreditStanding = 700
             }
         };
-        
+
         context.Customers.AddRange(customers);
         context.SaveChanges();
     }

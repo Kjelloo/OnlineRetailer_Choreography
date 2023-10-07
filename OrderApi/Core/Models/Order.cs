@@ -7,7 +7,7 @@ public class Order
     public int CustomerId { get; set; }
     public OrderStatus Status { get; set; }
     public IList<OrderLine> OrderLines { get; set; }
-        
+
     public override string ToString()
     {
         return $"Order id: {Id}, Date: {Date}, customerId: {CustomerId}, Status: {Status}";

@@ -13,7 +13,7 @@ services:
     build:
       context: .
       dockerfile: ProductApi/Dockerfile
-    depends_on: 
+    depends_on:
       - rabbitmq
 
   orderapi:
@@ -48,10 +48,10 @@ services:
 
   rabbitmq:
     image: rabbitmq:3-management
-    networks: 
+    networks:
       - retailerNetwork
     ports:
-    - "15673:15672"
+      - "15673:15672"
 
 networks:
   retailerNetwork:

@@ -19,7 +19,7 @@ public class CustomerRepository : IRepository<Customer>
         db.SaveChanges();
         return newCustomer;
     }
-    
+
     public Customer Get(int customerId)
     {
         return db.Customers.FirstOrDefault(p => p.Id == customerId)!;

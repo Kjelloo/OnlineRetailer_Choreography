@@ -3,6 +3,7 @@ using OrderApi.Core.Models;
 using OrderApi.Domain.Repositories;
 
 namespace OrderApi.Infrastructure.EfCore.Repositories;
+
 public class OrderRepository : IOrderRepository
 {
     private readonly OrderApiContext db;
@@ -16,15 +17,15 @@ public class OrderRepository : IOrderRepository
     {
         if (entity.Date == null)
             entity.Date = DateTime.Now;
-        
+
         var newOrder = db.Orders.Add(entity).Entity;
         db.SaveChanges();
         return newOrder;
     }
-    
+
     public Order Get(int id)
     {
-        var order =  db.Orders.Include(o => o.OrderLines).FirstOrDefault(o => o.Id == id);
+        var order = db.Orders.Include(o => o.OrderLines).FirstOrDefault(o => o.Id == id);
         return order;
     }
 
@@ -32,14 +33,14 @@ public class OrderRepository : IOrderRepository
     {
         return db.Orders.ToList();
     }
-    
+
     public Order Edit(Order entity)
     {
         db.Entry(entity).State = EntityState.Modified;
         db.SaveChanges();
         return entity;
     }
-    
+
     public Order Remove(Order entity)
     {
         var order = db.Orders.FirstOrDefault(entity);
@@ -51,8 +52,8 @@ public class OrderRepository : IOrderRepository
     public IEnumerable<Order> GetByCustomer(int customerId)
     {
         var ordersForCustomer = from o in db.Orders
-                                where o.CustomerId == customerId
-                                select o;
+            where o.CustomerId == customerId
+            select o;
 
         return ordersForCustomer.Include(o => o.OrderLines).ToList();
     }

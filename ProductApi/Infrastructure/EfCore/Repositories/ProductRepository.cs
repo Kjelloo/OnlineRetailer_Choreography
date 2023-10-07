@@ -17,9 +17,10 @@ public class ProductRepository : IRepository<Product>
     {
         var product = db.Products.Add(entity);
         db.SaveChanges();
-        
+
         return product.Entity;
     }
+
     public IEnumerable<Product> GetAll()
     {
         return db.Products.ToList();
@@ -29,14 +30,14 @@ public class ProductRepository : IRepository<Product>
     {
         return db.Products.FirstOrDefault(p => p.Id == id);
     }
-    
+
     public Product Edit(Product entity)
     {
         db.Entry(entity).State = EntityState.Modified;
         db.SaveChanges();
         return entity;
     }
-    
+
     public Product Remove(Product entity)
     {
         var product = db.Products.FirstOrDefault(entity);
