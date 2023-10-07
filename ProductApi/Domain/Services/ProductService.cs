@@ -5,6 +5,8 @@ using SharedModels;
 using SharedModels.Customer;
 using SharedModels.Helpers;
 using SharedModels.Order;
+using SharedModels.Order.Messages;
+using SharedModels.Order.Models;
 
 namespace ProductApi.Domain.Services;
 

@@ -4,6 +4,7 @@ using OrderApi.Infrastructure.Messages;
 using RestSharp;
 using SharedModels.Helpers;
 using SharedModels.Order;
+using SharedModels.Order.Models;
 
 namespace OrderApi.Domain.Services;
 
@@ -25,7 +26,7 @@ public class OrderService : IOrderService
     public Order Add(Order order)
     {
         // Create a tentative order.
-        order.Status = Order.OrderStatus.Tentative;
+        order.Status = OrderStatus.Tentative;
         var newOrder = _repository.Add(order);
         
         // Publish OrderStatusChangedMessage. 

@@ -1,10 +1,10 @@
-﻿using SharedModels.Order;
+﻿using SharedModels.Order.Models;
 
-namespace SharedModels.Customer
+namespace SharedModels.Customer.Messages
 {
     public class CustomerOrderRejectedMessage
     {
-        public int OrderId { get; set; }
+        public Order.Models.Order Order { get; set; }
         public int CustomerId { get; set; }
         public OrderRejectReason OrderRejectReason { get; set; }
     }

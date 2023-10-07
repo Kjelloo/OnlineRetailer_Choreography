@@ -4,6 +4,7 @@ using OrderApi.Domain.Repositories;
 using OrderApi.Infrastructure.Messages;
 using SharedModels;
 using SharedModels.Order;
+using SharedModels.Order.Models;
 
 namespace OrderApi.Controllers
 {

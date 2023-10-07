@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
+using SharedModels.Order.Models;
 
-namespace SharedModels.Order
+namespace SharedModels.Order.Messages
 {
     public class OrderCreatedMessage
     {

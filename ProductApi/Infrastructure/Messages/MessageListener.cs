@@ -5,33 +5,32 @@ using RestSharp;
 using SharedModels.Customer;
 using SharedModels.Helpers;
 using SharedModels.Order;
+using SharedModels.Order.Messages;
 
 namespace ProductApi.Infrastructure.Messages;
 
 public class MessageListener
 {
-    IServiceProvider provider;
-    string connectionString;
-    IBus bus;
-    private readonly RestClient _customerClient;
+    private readonly IServiceProvider _provider;
+    private readonly string _connectionString;
+    private IBus _bus;
 
     // The service provider is passed as a parameter, because the class needs
     // access to the product repository. With the service provider, we can create
     // a service scope that can provide an instance of the product repository.
     public MessageListener(IServiceProvider provider, string connectionString)
     {
-        this.provider = provider;
-        this.connectionString = connectionString;
-        _customerClient = new RestClient(RestConnectionHelper.GetCustomerUrl());
+        _provider = provider;
+        _connectionString = connectionString;
     }
 
     public void Start()
     {
         // Wait for RabbitMQ to start
         Thread.Sleep(5000);
-        using (bus = RabbitHutch.CreateBus(connectionString))
+        using (_bus = RabbitHutch.CreateBus(_connectionString))
         {
-            bus.PubSub.Subscribe<OrderCreatedMessage>("productApiHkCreated", 
+            _bus.PubSub.Subscribe<OrderCreatedMessage>("productApiHkCreated", 
                 HandleOrderCreated);
 
             // Block the thread so that it will not exit and stop subscribing.
@@ -48,40 +47,39 @@ public class MessageListener
         // A service scope is created to get an instance of the product repository.
         // When the service scope is disposed, the product repository instance will
         // also be disposed.
-        using (var scope = provider.CreateScope())
+        using var scope = _provider.CreateScope();
+        
+        var services = scope.ServiceProvider;
+        var productService = services.GetService<IProductService>();
+            
+        // Check if order is valid
+        var orderValidation = productService.IsOrderValid(message);
+            
+        var orderAccepted = orderValidation.Keys.First();
+        var orderRejected = orderValidation.Values.First();
+            
+        if (orderAccepted)
         {
-            var services = scope.ServiceProvider;
-            var productService = services.GetService<IProductService>();
-            
-            // Check if order is valid
-            var orderValidation = productService.IsOrderValid(message);
-            
-            var orderAccepted = orderValidation.Keys.First();
-            var orderRejected = orderValidation.Values.First();
-            
-            if (orderAccepted)
+            // Reserve items and publish an OrderAcceptedMessage
+            productService.ReserveProduct(message.OrderLines);
+
+            var replyMessage = new OrderAcceptedMessage
             {
-                // Reserve items and publish an OrderAcceptedMessage
-                productService.ReserveProduct(message.OrderLines);
+                OrderId = message.OrderId
+            };
 
-                var replyMessage = new OrderAcceptedMessage
-                {
-                    OrderId = message.OrderId
-                };
-
-                bus.PubSub.Publish(replyMessage);
-            }
-            else
+            _bus.PubSub.Publish(replyMessage);
+        }
+        else
+        {
+            // Publish an OrderRejectedMessage
+            var replyMessage = new OrderRejectedMessage
             {
-                // Publish an OrderRejectedMessage
-                var replyMessage = new OrderRejectedMessage
-                {
-                    OrderId = message.OrderId,
-                    Reason = orderRejected
-                };
+                OrderId = message.OrderId,
+                Reason = orderRejected
+            };
 
-                bus.PubSub.Publish(replyMessage);
-            }
+            _bus.PubSub.Publish(replyMessage);
         }
     }
 }

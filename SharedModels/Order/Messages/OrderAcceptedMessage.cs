@@ -1,4 +1,4 @@
-﻿namespace SharedModels.Order
+﻿namespace SharedModels.Order.Messages
 {
     public class OrderAcceptedMessage
     {

@@ -1,6 +1,8 @@
 ﻿using CustomerApi.Core.Models;
 using CustomerApi.Core.Services;
 using SharedModels;
+using SharedModels.Order;
+using SharedModels.Order.Models;
 
 namespace CustomerApi.Domain.Services;
 
@@ -55,5 +57,34 @@ public class CustomerService : ICustomerService
     public bool SufficientCredit(int id)
     {
         return Get(id).CreditStanding > 670;
+    }
+
+    public void NotifyCustomer(int customerId, Order order, OrderRejectReason? reason)
+    {
+        var customer = Get(customerId);
+        
+        // If the order was rejected, notify the customer
+        if (reason is not null)
+        {
+            SendEmail(customer.Email, "Order rejected", $"Your order {order.Id} was rejected because {reason}");
+        }
+
+        switch (order.Status)
+        {
+            case OrderStatus.WaitingToBeShipped:
+                SendEmail(customer.Email, "Order received", $"Your order {order.Id} was received and is being processed");
+                break;
+            case OrderStatus.Shipped:
+                SendEmail(customer.Email, "Order shipped", $"Your order {order.Id} was shipped");
+                break;
+            case OrderStatus.Completed:
+                SendEmail(customer.Email, "Order completed", $"Your order {order.Id} was completed");
+                break;
+        }
+    }
+
+    public void SendEmail(string email, string subject, string body)
+    {
+        // Implement email sending
     }
 }

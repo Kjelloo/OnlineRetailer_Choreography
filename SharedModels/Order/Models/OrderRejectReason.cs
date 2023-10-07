@@ -1,4 +1,4 @@
-﻿namespace SharedModels.Order
+﻿namespace SharedModels.Order.Models
 {
     public enum OrderRejectReason
     {

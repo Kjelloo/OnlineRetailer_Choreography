@@ -1,6 +1,8 @@
 ﻿using ProductApi.Core.Models;
 using SharedModels;
 using SharedModels.Order;
+using SharedModels.Order.Messages;
+using SharedModels.Order.Models;
 
 namespace ProductApi.Core.Services;
 

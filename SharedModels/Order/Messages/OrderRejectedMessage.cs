@@ -1,4 +1,6 @@
-﻿namespace SharedModels.Order
+﻿using SharedModels.Order.Models;
+
+namespace SharedModels.Order.Messages
 {
     public class OrderRejectedMessage
     {
