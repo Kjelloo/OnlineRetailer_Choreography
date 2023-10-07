@@ -1,25 +1,28 @@
 ﻿using EasyNetQ;
+using OrderApi.Core.Models;
 using SharedModels;
-using SharedModels.Order;
+using SharedModels.Helpers;
+using SharedModels.Order.Dtos;
 using SharedModels.Order.Messages;
-using SharedModels.Order.Models;
 
 namespace OrderApi.Infrastructure.Messages
 {
     public class MessagePublisher : IMessagePublisher, IDisposable
     {
-        IBus bus;
+        private readonly IBus _bus;
+        private readonly IConverter<OrderLine, OrderLineDto> _orderConverter;
 
-        public MessagePublisher(string connectionString)
+        public MessagePublisher(IConverter<OrderLine, OrderLineDto> orderConverter)
         {
             // Wait for RabbitMQ to start
-            Thread.Sleep(5000);
-            bus = RabbitHutch.CreateBus(connectionString);
+            Thread.Sleep(15000);
+            _orderConverter = orderConverter;
+            _bus = RabbitHutch.CreateBus(MessageConnectionHelper.ConnectionString);
         }
-
+        
         public void Dispose()
         {
-            bus.Dispose();
+            _bus.Dispose();
         }
 
         public void PublishOrderCreatedMessage(int? customerId, int orderId, IList<OrderLine> orderLines)
@@ -28,10 +31,10 @@ namespace OrderApi.Infrastructure.Messages
             { 
                 CustomerId = customerId,
                 OrderId = orderId,
-                OrderLines = orderLines 
+                OrderLines = orderLines.Select(ol => _orderConverter.Convert(ol)).ToList() 
             };
 
-            bus.PubSub.Publish(message);
+            _bus.PubSub.Publish(message);
         }
     }
 }

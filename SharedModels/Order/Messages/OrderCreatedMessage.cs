@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using SharedModels.Order.Models;
+using SharedModels.Order.Dtos;
 
 namespace SharedModels.Order.Messages
 {
@@ -7,6 +7,6 @@ namespace SharedModels.Order.Messages
     {
         public int? CustomerId { get; set; }
         public int OrderId { get; set; }
-        public IList<OrderLine> OrderLines { get; set; }
+        public IList<OrderLineDto> OrderLines { get; set; }
     }
 }

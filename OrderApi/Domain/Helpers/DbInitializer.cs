@@ -1,5 +1,5 @@
-﻿using OrderApi.Infrastructure.EfCore;
-using SharedModels.Order.Models;
+﻿using OrderApi.Core.Models;
+using OrderApi.Infrastructure.EfCore;
 
 namespace OrderApi.Domain.Helpers
 {

@@ -1,4 +1,4 @@
-﻿using SharedModels.Order.Models;
+﻿using SharedModels.Order.Dtos;
 
 namespace SharedModels.Order.Messages
 {

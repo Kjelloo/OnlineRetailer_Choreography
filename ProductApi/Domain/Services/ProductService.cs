@@ -4,8 +4,8 @@ using RestSharp;
 using SharedModels;
 using SharedModels.Customer;
 using SharedModels.Helpers;
+using SharedModels.Order.Dtos;
 using SharedModels.Order.Messages;
-using SharedModels.Order.Models;
 
 namespace ProductApi.Domain.Services;
 
@@ -101,7 +101,7 @@ public class ProductService : IProductService
         };
     }
 
-    private bool IsProductAvailable(IEnumerable<OrderLine> orderLines)
+    private bool IsProductAvailable(IEnumerable<OrderLineDto> orderLines)
     {
         foreach (var orderLine in orderLines)
         {
@@ -115,7 +115,7 @@ public class ProductService : IProductService
         return true;
     }
 
-    public void ReserveProduct(IEnumerable<OrderLine> orderLines)
+    public void ReserveProduct(IEnumerable<OrderLineDto> orderLines)
     {
         foreach (var orderLine in orderLines)
         {

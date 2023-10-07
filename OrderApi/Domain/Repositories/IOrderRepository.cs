@@ -1,6 +1,5 @@
-﻿using SharedModels;
-using SharedModels.Order;
-using SharedModels.Order.Models;
+﻿using OrderApi.Core.Models;
+using SharedModels;
 
 namespace OrderApi.Domain.Repositories
 {

@@ -3,7 +3,7 @@ using CustomerApi.Core.Services;
 using RestSharp;
 using SharedModels;
 using SharedModels.Helpers;
-using SharedModels.Order.Models;
+using SharedModels.Order.Dtos;
 
 namespace CustomerApi.Domain.Services;
 
@@ -62,7 +62,7 @@ public class CustomerService : ICustomerService
         return Get(customerId).CreditStanding > 670;
     }
 
-    public void NotifyCustomer(int customerId, Order order, OrderRejectReason? reason)
+    public void NotifyCustomer(int customerId, OrderDto order, OrderRejectReason? reason)
     {
         var customer = Get(customerId);
         
@@ -74,16 +74,16 @@ public class CustomerService : ICustomerService
 
         switch (order.Status)
         {
-            case OrderStatus.WaitingToBeShipped:
+            case OrderStatusDto.WaitingToBeShipped:
                 SendEmail(customer.Email, "Order received", $"Your order {order.Id} was received and is being processed");
                 break;
-            case OrderStatus.Shipped:
+            case OrderStatusDto.Shipped:
                 SendEmail(customer.Email, "Order shipped", $"Your order {order.Id} was shipped");
                 break;
-            case OrderStatus.Completed:
+            case OrderStatusDto.Completed:
                 SendEmail(customer.Email, "Order completed", $"Your order {order.Id} was completed");
                 break;
-            case OrderStatus.Tentative:
+            case OrderStatusDto.Tentative:
                 break;
             default:
                 throw new ArgumentException("Order status is not valid");
@@ -100,13 +100,13 @@ public class CustomerService : ICustomerService
         // get customer - if customer does not exist, throw exception
         Get(customerId);
         
-        return GetCustomerOrders(customerId).Any(order => order.Status is not OrderStatus.Completed);
+        return GetCustomerOrders(customerId).Any(order => order.Status is not OrderStatusDto.Completed);
     }
 
-    private IEnumerable<Order> GetCustomerOrders(int customerId)
+    public IEnumerable<OrderDto> GetCustomerOrders(int customerId)
     {
         var orderRequest = new RestRequest($"customerOrders/{customerId}");
-        var orderResponse = _restClient.GetAsync<IEnumerable<Order>>(orderRequest).Result;
+        var orderResponse = _restClient.GetAsync<IEnumerable<OrderDto>>(orderRequest).Result;
         
         return orderResponse!;
     }

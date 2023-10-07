@@ -1,10 +1,7 @@
-﻿using OrderApi.Core.Services;
+﻿using OrderApi.Core.Models;
+using OrderApi.Core.Services;
 using OrderApi.Domain.Repositories;
 using OrderApi.Infrastructure.Messages;
-using RestSharp;
-using SharedModels.Helpers;
-using SharedModels.Order;
-using SharedModels.Order.Models;
 
 namespace OrderApi.Domain.Services;
 
@@ -12,15 +9,11 @@ public class OrderService : IOrderService
 {
     private readonly IMessagePublisher _messagePublisher;
     private readonly IOrderRepository _repository;
-    private RestClient customerClient;
-    private RestClient productClient;
 
     public OrderService(IOrderRepository repository, IMessagePublisher messagePublisher)
     {
         _messagePublisher = messagePublisher;
         _repository = repository;
-        customerClient = new RestClient(RestConnectionHelper.GetCustomerUrl());
-        productClient = new RestClient(RestConnectionHelper.GetProductUrl());
     }
 
     public Order Add(Order order)
@@ -56,7 +49,7 @@ public class OrderService : IOrderService
         return _repository.Remove(entity);
     }
 
-    public IEnumerable<Order> FindByCustomer(int customerId)
+    public IEnumerable<Order> GetByCustomer(int customerId)
     {
         return _repository.GetByCustomer(customerId);
     }

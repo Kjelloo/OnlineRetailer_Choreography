@@ -1,18 +1,17 @@
 ﻿using EasyNetQ;
+using OrderApi.Core.Models;
 using OrderApi.Core.Services;
-using OrderApi.Domain.Repositories;
 using SharedModels;
-using SharedModels.Customer;
 using SharedModels.Customer.Messages;
-using SharedModels.Order;
+using SharedModels.Order.Dtos;
 using SharedModels.Order.Messages;
-using SharedModels.Order.Models;
 
 namespace OrderApi.Infrastructure.Messages;
 public class MessageListener
 {
     private readonly IServiceProvider _provider;
     private readonly string _connectionString;
+    private IConverter<Order, OrderDto> _orderConverter;
     private IBus _bus;
 
     // The service provider is passed as a parameter, because the class needs
@@ -27,7 +26,7 @@ public class MessageListener
     public void Start()
     {
         // Wait for RabbitMQ to start
-        Thread.Sleep(5000);
+        Thread.Sleep(15000);
         using (_bus = RabbitHutch.CreateBus(_connectionString))
         {
             _bus.PubSub.Subscribe<OrderAcceptedMessage>("orderApiHkAccepted",
@@ -47,8 +46,9 @@ public class MessageListener
     private void HandleOrderAccepted(OrderAcceptedMessage message)
     {
         using var scope = _provider.CreateScope();
-        
         var services = scope.ServiceProvider;
+        _orderConverter = services.GetService<IConverter<Order, OrderDto>>();
+        
         var orderRepos = services.GetService<IOrderService>();
 
         // Mark order as completed
@@ -58,7 +58,7 @@ public class MessageListener
         
         var customerOrderAcceptedMessage = new CustomerOrderUpdatedMessage
         {
-            Order = order,
+            Order = _orderConverter.Convert(order),
             CustomerId = order.CustomerId
         };
 
@@ -77,7 +77,7 @@ public class MessageListener
             
         var customerOrderRejectedMessage = new CustomerOrderRejectedMessage
         {
-            Order = order,
+            Order = _orderConverter.Convert(order),
             CustomerId = order.CustomerId,
             OrderRejectReason = message.Reason
         };

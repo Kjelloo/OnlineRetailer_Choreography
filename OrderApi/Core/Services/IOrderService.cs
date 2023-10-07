@@ -1,12 +1,11 @@
-﻿using SharedModels;
-using SharedModels.Order;
-using SharedModels.Order.Models;
+﻿using OrderApi.Core.Models;
+using SharedModels;
 
 namespace OrderApi.Core.Services;
 
 public interface IOrderService : IService<Order>
 {
-    IEnumerable<Order> FindByCustomer(int customerId);
+    IEnumerable<Order> GetByCustomer(int customerId);
     Order Cancel();
     Order Ship();
     Order Pay();

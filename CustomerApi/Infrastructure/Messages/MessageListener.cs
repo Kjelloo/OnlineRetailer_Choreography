@@ -19,7 +19,7 @@ public class MessageListener
     public void Start()
     {
         // Wait for RabbitMQ to start
-        Thread.Sleep(5000);
+        Thread.Sleep(15000);
         using (_bus = RabbitHutch.CreateBus(_connectionString))
         {
             // Handle rejected orders

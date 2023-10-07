@@ -1,6 +1,7 @@
 using CustomerApi.Core.Models;
 using CustomerApi.Core.Services;
 using Microsoft.AspNetCore.Mvc;
+using SharedModels;
 using SharedModels.Customer;
 
 namespace CustomerApi.Controllers;
@@ -19,7 +20,7 @@ public class CustomersController : ControllerBase
     }
 
     [HttpPost]
-    public ActionResult Post([FromBody] CustomerDto customerDto)
+    public IActionResult Post([FromBody] CustomerDto customerDto)
     {
         try
         {
@@ -34,13 +35,30 @@ public class CustomersController : ControllerBase
     }
     
     [HttpGet("{id}")]
-    public ActionResult<Customer> Get(int id)
+    public IActionResult Get(int id)
     {
         try
         {
             var customer = _service.Get(id);
             
-            return Ok(customer);
+            var customerDto = _converter.Convert(customer);
+            
+            return Ok(customerDto);
+        }
+        catch (Exception e)
+        {
+            return NotFound(e.Message);
+        }
+    }
+    
+    [HttpGet("orders/{id}")]
+    public IActionResult GetOrdersForCustomer(int id)
+    {
+        try
+        {
+            var ordersDto = _service.GetCustomerOrders(id);
+            
+            return Ok(ordersDto);
         }
         catch (Exception e)
         {
@@ -49,13 +67,13 @@ public class CustomersController : ControllerBase
     }
     
     [HttpGet]
-    public ActionResult<IEnumerable<Customer>> Get()
+    public IActionResult Get()
     {
-        return Ok(_service.GetAll());
+        return Ok(_service.GetAll().Select(c => _converter.Convert(c)));
     }
     
     [HttpGet("credit/{id}")]
-    public ActionResult<bool> GetCustomerSufficientCredit(int id)
+    public IActionResult GetCustomerSufficientCredit(int id)
     {
         try
         {
@@ -70,7 +88,7 @@ public class CustomersController : ControllerBase
     }
     
     [HttpGet("bills/{id}")]
-    public ActionResult<bool> GetCustomerOutstandingBills(int id)
+    public IActionResult GetCustomerOutstandingBills(int id)
     {
         try
         {

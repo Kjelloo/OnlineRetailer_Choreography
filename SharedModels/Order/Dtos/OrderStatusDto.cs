@@ -1,6 +1,6 @@
-﻿namespace SharedModels.Order.Models
+﻿namespace SharedModels.Order.Dtos
 {
-    public enum OrderStatus
+    public enum OrderStatusDto
     {
         Tentative,
         Completed,

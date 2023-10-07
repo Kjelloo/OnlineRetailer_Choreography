@@ -1,6 +1,6 @@
-﻿namespace SharedModels.Order.Models
+﻿namespace SharedModels.Order.Dtos
 {
-    public class OrderLine
+    public class OrderLineDto
     {
         public int Id { get; set; }
         public int OrderId { get; set; }

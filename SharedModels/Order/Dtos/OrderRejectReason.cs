@@ -1,4 +1,4 @@
-﻿namespace SharedModels.Order.Models
+﻿namespace SharedModels.Order.Dtos
 {
     public enum OrderRejectReason
     {
