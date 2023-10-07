@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SharedModels;
 
-namespace OrderApi.Data
+namespace OrderApi.Infrastructure.EfCore
 {
     public class OrderApiContext : DbContext
     {

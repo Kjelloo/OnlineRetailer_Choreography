@@ -1,7 +1,6 @@
-﻿using System.Collections.Generic;
-using SharedModels;
+﻿using SharedModels;
 
-namespace OrderApi.Data
+namespace OrderApi.Domain.Repositories
 {
     public interface IOrderRepository : IRepository<Order>
     {

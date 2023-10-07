@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using EasyNetQ;
+﻿using EasyNetQ;
 using SharedModels;
 
-namespace OrderApi.Infrastructure
+namespace OrderApi.Infrastructure.Messages
 {
     public class MessagePublisher : IMessagePublisher, IDisposable
     {
@@ -30,6 +28,5 @@ namespace OrderApi.Infrastructure
 
             bus.PubSub.Publish(message);
         }
-
     }
 }

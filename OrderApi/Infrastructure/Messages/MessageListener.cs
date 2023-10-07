@@ -1,11 +1,8 @@
-﻿using System;
-using System.Threading;
-using EasyNetQ;
-using Microsoft.Extensions.DependencyInjection;
-using OrderApi.Data;
+﻿using EasyNetQ;
+using OrderApi.Domain.Repositories;
 using SharedModels;
 
-namespace OrderApi.Infrastructure
+namespace OrderApi.Infrastructure.Messages
 {
     public class MessageListener
     {
@@ -67,6 +64,18 @@ namespace OrderApi.Infrastructure
 
                 // Delete tentative order.
                 orderRepos.Remove(message.OrderId);
+            }
+
+            switch (message.Reason)
+            {
+                case OrderRejectReason.CustomerDoesNotExist:
+                    break;
+                case OrderRejectReason.CustomerCreditIsNotGoodEnough:
+                    break;
+                case OrderRejectReason.InsufficientStock:
+                    break;
+                default:
+                    throw new ArgumentException("Unknown reason for rejecting order");
             }
         }
     }

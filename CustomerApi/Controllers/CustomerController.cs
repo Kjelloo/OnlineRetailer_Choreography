@@ -33,10 +33,40 @@ namespace CustomerApi.Controllers
             }
         }
         
+        [HttpGet("credit/{id}")]
+        public ActionResult<bool> GetCustomerSufficientCredit(int id)
+        {
+            try
+            {
+                var credit = _service.SufficientCredit(id);
+                
+                return Ok(credit);
+            }
+            catch (Exception)
+            {
+                return NotFound("Customer not found");
+            }
+        }
+        
+        [HttpGet("{id}")]
+        public ActionResult<Customer> Get(int id)
+        {
+            try
+            {
+                var customer = _service.Find(id);
+                
+                return Ok(customer);
+            }
+            catch (Exception)
+            {
+                return NotFound("Customer not found");
+            }
+        }
+        
         [HttpGet]
         public ActionResult<IEnumerable<Customer>> Get()
         {
-            return Ok(_service.Get());
+            return Ok(_service.FindAll());
         }
     }
 }

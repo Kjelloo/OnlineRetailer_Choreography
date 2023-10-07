@@ -1,5 +1,7 @@
-﻿using CustomerApi.Core.Models;
+﻿using System.Collections;
+using CustomerApi.Core.Models;
 using CustomerApi.Infrastructure.EfCore;
+using SharedModels;
 
 namespace CustomerApi.Domain.Helpers;
 
@@ -9,11 +11,6 @@ public class DbInitializer : IDbInitializer
     {
         context.Database.EnsureDeleted();
         context.Database.EnsureCreated();
-
-        if (context.Customers.Any())
-        {
-            return;
-        }
 
         List<Customer> customers = new List<Customer>
         {

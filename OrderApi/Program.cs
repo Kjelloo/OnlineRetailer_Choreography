@@ -1,6 +1,9 @@
 using Microsoft.EntityFrameworkCore;
-using OrderApi.Data;
-using OrderApi.Infrastructure;
+using OrderApi.Domain.Helpers;
+using OrderApi.Domain.Repositories;
+using OrderApi.Infrastructure.EfCore;
+using OrderApi.Infrastructure.EfCore.Repositories;
+using OrderApi.Infrastructure.Messages;
 using SharedModels;
 
 var builder = WebApplication.CreateBuilder(args);

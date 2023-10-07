@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using OrderApi.Infrastructure.EfCore;
 using SharedModels;
 
-namespace OrderApi.Data
+namespace OrderApi.Domain.Helpers
 {
     public class DbInitializer : IDbInitializer
     {
@@ -23,6 +21,7 @@ namespace OrderApi.Data
             {
                 new Order {
                     Date = DateTime.Today,
+                    CustomerId = 1,
                     OrderLines = new List<OrderLine>{
                         new OrderLine { ProductId = 1, Quantity = 2 } }
                 }

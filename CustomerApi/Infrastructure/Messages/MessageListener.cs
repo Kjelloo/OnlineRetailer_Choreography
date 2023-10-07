@@ -1,7 +1,4 @@
-﻿using CustomerApi.Core.Models;
-using CustomerApi.Domain.Repositories;
-using EasyNetQ;
-using SharedModels;
+﻿using EasyNetQ;
 
 namespace CustomerApi.Infrastructure.Messages;
 
@@ -21,8 +18,8 @@ public class MessageListener
     {
         using (bus = RabbitHutch.CreateBus(connectionString))
         {
-            bus.SendReceive.Receive("customer.requests", x => x
-                .Add<CustomerExistsMessage>(HandleCustomerExistRequest));
+            //bus.SendReceive.Receive("customer.requests", x => x
+              //  .Add<CustomerExistsMessage>(HandleCustomerExistRequest));
 
             // Block the thread so that it will not exit and stop subscribing.
             lock (this)
@@ -32,26 +29,5 @@ public class MessageListener
         }
 
     }
-
-    private void HandleCustomerExistRequest(CustomerExistsMessage customerExistsMessage)
-    {
-        using (var scope = provider.CreateScope())
-        {
-            var services = scope.ServiceProvider;
-            var customerRepo = services.GetService<IRepository<Customer>>();
-            
-            var customer = customerRepo.Get(customerExistsMessage.CustomerId);
-            
-            if (customer is null)
-            {
-                bus.SendReceive.Send("customer.requests", customerExistsMessage); 
-            }
-            else
-            {
-                customerExistsMessage.Exists = true;
-                bus.SendReceive.Send("customer.requests", customerExistsMessage);
-            }
-                
-        }
-    }
+    
 }

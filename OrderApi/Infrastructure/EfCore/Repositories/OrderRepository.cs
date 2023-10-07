@@ -1,10 +1,8 @@
-﻿using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
-using System.Linq;
+﻿using Microsoft.EntityFrameworkCore;
+using OrderApi.Domain.Repositories;
 using SharedModels;
-using System;
 
-namespace OrderApi.Data
+namespace OrderApi.Infrastructure.EfCore.Repositories
 {
     public class OrderRepository : IOrderRepository
     {
@@ -45,7 +43,7 @@ namespace OrderApi.Data
         public IEnumerable<Order> GetByCustomer(int customerId)
         {
             var ordersForCustomer = from o in db.Orders
-                                    where o.customerId == customerId
+                                    where o.CustomerId == customerId
                                     select o;
 
             return ordersForCustomer.ToList();

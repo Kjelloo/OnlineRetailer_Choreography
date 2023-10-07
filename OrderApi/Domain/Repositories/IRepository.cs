@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace OrderApi.Data
+﻿namespace OrderApi.Domain.Repositories
 {
     public interface IRepository<T>
     {

@@ -1,6 +1,7 @@
 ﻿using CustomerApi.Core.Models;
 using CustomerApi.Core.Services;
 using CustomerApi.Domain.Repositories;
+using SharedModels;
 
 namespace CustomerApi.Domain.Services;
 
@@ -25,7 +26,24 @@ public class CustomerService : ICustomerService
         return _repository.Add(customer);
     }
 
-    public IEnumerable<Customer> Get()
+    public Customer Find(int id)
+    {
+        var customer = _repository.Get(id);
+
+        if (customer is null)
+        {
+            throw new Exception("Customer does not exist");
+        }
+        
+        return _repository.Get(id);
+    }
+
+    public bool SufficientCredit(int id)
+    {
+        return _repository.Get(id).CreditStanding > 670;
+    }
+
+    public IEnumerable<Customer> FindAll()
     {
         return _repository.GetAll();
     }

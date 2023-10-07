@@ -1,7 +1,6 @@
-﻿using System.Collections.Generic;
-using SharedModels;
+﻿using SharedModels;
 
-namespace OrderApi.Infrastructure
+namespace OrderApi.Infrastructure.Messages
 {
     public interface IMessagePublisher
     {

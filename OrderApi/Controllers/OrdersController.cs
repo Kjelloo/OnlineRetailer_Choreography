@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading;
-using Microsoft.AspNetCore.Mvc;
-using OrderApi.Data;
-using OrderApi.Infrastructure;
+﻿using Microsoft.AspNetCore.Mvc;
+using OrderApi.Core.Services;
+using OrderApi.Domain.Repositories;
+using OrderApi.Infrastructure.Messages;
 using SharedModels;
 
 namespace OrderApi.Controllers
@@ -14,12 +12,28 @@ namespace OrderApi.Controllers
     {
         IOrderRepository repository;
         IMessagePublisher messagePublisher;
+        private readonly IOrderService _service;
 
         public OrdersController(IRepository<Order> repos,
-            IMessagePublisher publisher)
+            IMessagePublisher publisher,
+            IOrderService service)
         {
             repository = repos as IOrderRepository;
             messagePublisher = publisher;
+            _service = service;
+        }
+        
+        [HttpGet("customerOrders/{customerId}")]
+        public IActionResult GetCustomerOrders(int customerId)
+        {
+            var orders = repository.GetByCustomer(customerId);
+            
+            if (orders == null)
+            {
+                return NotFound();
+            }
+            
+            return Ok(orders);
         }
 
         // GET orders
@@ -38,6 +52,7 @@ namespace OrderApi.Controllers
             {
                 return NotFound();
             }
+            
             return new ObjectResult(item);
         }
 
@@ -49,31 +64,21 @@ namespace OrderApi.Controllers
             {
                 return BadRequest();
             }
-
+            
             try
             {
-                
-                
-                // Create a tentative order.
-                order.Status = Order.OrderStatus.tentative;
-                var newOrder = repository.Add(order);
-
-                // Publish OrderStatusChangedMessage. 
-                messagePublisher.PublishOrderCreatedMessage(
-                    newOrder.customerId, newOrder.Id, newOrder.OrderLines);
+                var newOrder = _service.Create(order);
 
                 // Return a non-binding order confirmation immediately.
                 // (an email will be sent when the order status becomes complete)
                 return CreatedAtRoute("GetOrder", new { id = newOrder.Id }, newOrder);
             }
-            catch
+            catch (Exception e)
             {
-                return StatusCode(500, "An error happened. Try again.");
+                return BadRequest(e.Message);
             }
-
         }
-
-
+        
         // PUT orders/5/cancel
         // This action method cancels an order and publishes an OrderStatusChangedMessage
         // with topic set to "cancelled".

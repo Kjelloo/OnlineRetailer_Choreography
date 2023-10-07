@@ -5,6 +5,7 @@ using EasyNetQ;
 using Microsoft.Extensions.DependencyInjection;
 using ProductApi.Data;
 using ProductApi.Models;
+using RestSharp;
 using SharedModels;
 
 namespace ProductApi.Infrastructure
@@ -14,6 +15,7 @@ namespace ProductApi.Infrastructure
         IServiceProvider provider;
         string connectionString;
         IBus bus;
+        private readonly RestClient _customerClient;
 
         // The service provider is passed as a parameter, because the class needs
         // access to the product repository. With the service provider, we can create
@@ -22,6 +24,7 @@ namespace ProductApi.Infrastructure
         {
             this.provider = provider;
             this.connectionString = connectionString;
+            _customerClient = new RestClient(RestConnectionHelper.GetCustomerUrl());
         }
 
         public void Start()
@@ -47,10 +50,38 @@ namespace ProductApi.Infrastructure
             // also be disposed.
             using (var scope = provider.CreateScope())
             {
+                var orderAccepted = true;
+                OrderRejectReason orderRejected = default;
+                
                 var services = scope.ServiceProvider;
                 var productRepos = services.GetService<IRepository<Product>>();
+                
+                // Check if customer exists
+                var customerExistRequest = new RestRequest(message.CustomerId.ToString());
+                var customerExistResponse = _customerClient.GetAsync<CustomerDto>(customerExistRequest).Result;
 
-                if (ProductItemsAvailable(message.OrderLines, productRepos))
+                if (customerExistResponse is null)
+                {
+                    orderAccepted = false;
+                    orderRejected = OrderRejectReason.CustomerDoesNotExist;
+                }
+                
+                var customerEnoughCreditRequest = new RestRequest($"credit/ + {message.CustomerId}");
+                var customerEnoughCreditResponse = _customerClient.GetAsync<bool>(customerEnoughCreditRequest).Result;
+                
+                if (!customerEnoughCreditResponse)
+                {
+                    orderAccepted = false;
+                    orderRejected = OrderRejectReason.CustomerCreditIsNotGoodEnough;
+                }
+                
+                if (!ProductItemsAvailable(message.OrderLines, productRepos))
+                {
+                    orderAccepted = false;
+                    orderRejected = OrderRejectReason.InsufficientStock;
+                }
+                
+                if (orderAccepted)
                 {
                     // Reserve items and publish an OrderAcceptedMessage
                     foreach (var orderLine in message.OrderLines)
@@ -72,7 +103,8 @@ namespace ProductApi.Infrastructure
                     // Publish an OrderRejectedMessage
                     var replyMessage = new OrderRejectedMessage
                     {
-                        OrderId = message.OrderId
+                        OrderId = message.OrderId,
+                        Reason = orderRejected
                     };
 
                     bus.PubSub.Publish(replyMessage);

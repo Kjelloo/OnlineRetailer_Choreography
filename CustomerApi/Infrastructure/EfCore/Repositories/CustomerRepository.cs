@@ -1,6 +1,7 @@
 ﻿using CustomerApi.Core.Models;
 using CustomerApi.Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
+using SharedModels;
 
 namespace CustomerApi.Infrastructure.EfCore.Repositories;
 
