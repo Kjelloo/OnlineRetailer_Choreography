@@ -2,7 +2,7 @@
 using SharedModels;
 using SharedModels.Product;
 
-namespace ProductApi.Domain.Services;
+namespace ProductApi.Domain.Converters;
 
 public class ProductConverter : IConverter<Product, ProductDto>
 {

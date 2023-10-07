@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using ProductApi.Core.Models;
 using ProductApi.Core.Services;
+using ProductApi.Domain.Converters;
 using ProductApi.Domain.Helpers;
 using ProductApi.Domain.Services;
 using ProductApi.Infrastructure.EfCore;

@@ -2,7 +2,7 @@
 using SharedModels;
 using SharedModels.Customer;
 
-namespace CustomerApi.Domain.Services;
+namespace CustomerApi.Domain.Converters;
 
 public class CustomerConverter : IConverter<Customer, CustomerDto>
 {

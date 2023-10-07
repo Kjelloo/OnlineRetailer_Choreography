@@ -1,5 +1,6 @@
 using CustomerApi.Core.Models;
 using CustomerApi.Core.Services;
+using CustomerApi.Domain.Converters;
 using CustomerApi.Domain.Helpers;
 using CustomerApi.Domain.Services;
 using CustomerApi.Infrastructure.EfCore;
