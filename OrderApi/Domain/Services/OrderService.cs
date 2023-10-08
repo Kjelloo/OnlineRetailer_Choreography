@@ -2,6 +2,8 @@
 using OrderApi.Core.Services;
 using OrderApi.Domain.Repositories;
 using OrderApi.Infrastructure.Messages;
+using SharedModels;
+using SharedModels.Order.Dtos;
 
 namespace OrderApi.Domain.Services;
 
@@ -9,10 +11,12 @@ public class OrderService : IOrderService
 {
     private readonly IMessagePublisher _messagePublisher;
     private readonly IOrderRepository _repository;
+    private readonly IConverter<Order, OrderDto> _orderConverter;
 
-    public OrderService(IOrderRepository repository, IMessagePublisher messagePublisher)
+    public OrderService(IOrderRepository repository, IMessagePublisher messagePublisher, IConverter<Order, OrderDto> orderConverter)
     {
         _messagePublisher = messagePublisher;
+        _orderConverter = orderConverter;
         _repository = repository;
     }
 
@@ -22,9 +26,17 @@ public class OrderService : IOrderService
         order.Status = OrderStatus.Tentative;
         var newOrder = _repository.Add(order);
 
+        // Update order lines with the new order id.
+        foreach (var orderLine in newOrder.OrderLines)
+        {
+            orderLine.OrderId = newOrder.Id;
+        }
+
+        Edit(newOrder);
+        
         // Publish OrderStatusChangedMessage. 
         _messagePublisher.PublishOrderCreatedMessage(
-            newOrder.CustomerId, newOrder.Id, newOrder.OrderLines);
+            newOrder.CustomerId, newOrder.Id, newOrder.OrderLines.ToList());
 
         return newOrder;
     }
@@ -54,18 +66,43 @@ public class OrderService : IOrderService
         return _repository.GetByCustomer(customerId);
     }
 
-    public Order Cancel()
+    public Order Cancel(int id)
     {
-        throw new NotImplementedException();
+        var order = Get(id);
+        order.Status = OrderStatus.Cancelled;
+        var updatedOrder = Edit(order);
+
+        var orderDto = _orderConverter.Convert(updatedOrder);
+        
+        _messagePublisher.PublishOrderStatusChangedMessage(
+            updatedOrder.CustomerId, orderDto, updatedOrder.Status, "cancelled");
+
+        return updatedOrder;
     }
 
-    public Order Ship()
+    public Order Ship(int id)
     {
-        throw new NotImplementedException();
+        var order = Get(id);
+        order.Status = OrderStatus.Shipped;
+        var updatedOrder = Edit(order);
+        
+        var orderDto = _orderConverter.Convert(updatedOrder);
+        
+        _messagePublisher.PublishOrderStatusChangedMessage(
+            updatedOrder.CustomerId, orderDto, updatedOrder.Status, "shipped");
+
+        return updatedOrder;
     }
 
-    public Order Pay()
+    public Order Pay(int id)
     {
-        throw new NotImplementedException();
+        var order = Get(id);
+        order.Status = OrderStatus.Completed;
+        var updatedOrder = Edit(order);
+        
+        _messagePublisher.PublishCustomerCreditStandingChangedMessage(
+            updatedOrder.CustomerId, 20);
+
+        return updatedOrder;
     }
 }

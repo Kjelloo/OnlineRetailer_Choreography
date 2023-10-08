@@ -9,7 +9,7 @@ namespace SharedModels.Order.Dtos
         public DateTime? Date { get; set; }
         public int CustomerId { get; set; }
         public OrderStatusDto Status { get; set; }
-        public IList<OrderLineDto> OrderLines { get; set; }
+        public IEnumerable<OrderLineDto> OrderLines { get; set; }
 
         public override string ToString()
         {

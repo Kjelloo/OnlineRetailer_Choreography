@@ -22,7 +22,8 @@ public class MessageListener
     public void Start()
     {
         // Wait for RabbitMQ to start
-        Thread.Sleep(5000);
+        Thread.Sleep(10000);
+        
         using (_bus = RabbitHutch.CreateBus(_connectionString))
         {
             _bus.PubSub.Subscribe<OrderCreatedMessage>("productApiHkCreated",
@@ -42,6 +43,8 @@ public class MessageListener
         // When the service scope is disposed, the product repository instance will
         // also be disposed.
         using var scope = _provider.CreateScope();
+        
+        Console.WriteLine($"ProductApi received message: {message.OrderId}");
 
         var services = scope.ServiceProvider;
         var productService = services.GetService<IProductService>();
@@ -61,6 +64,8 @@ public class MessageListener
             {
                 OrderId = message.OrderId
             };
+            
+            Console.WriteLine($"ProductApi sending accepted message: {replyMessage.OrderId}");
 
             _bus.PubSub.Publish(replyMessage);
         }
@@ -72,6 +77,8 @@ public class MessageListener
                 OrderId = message.OrderId,
                 Reason = orderRejected
             };
+            
+            Console.WriteLine($"ProductApi sending rejected message: {replyMessage.OrderId} +  {replyMessage.Reason}");
 
             _bus.PubSub.Publish(replyMessage);
         }

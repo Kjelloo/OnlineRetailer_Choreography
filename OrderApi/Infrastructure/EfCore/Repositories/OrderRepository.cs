@@ -31,7 +31,7 @@ public class OrderRepository : IOrderRepository
 
     public IEnumerable<Order> GetAll()
     {
-        return db.Orders.ToList();
+        return db.Orders.Include(o => o.OrderLines).ToList();
     }
 
     public Order Edit(Order entity)

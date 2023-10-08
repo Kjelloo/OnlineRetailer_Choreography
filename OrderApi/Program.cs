@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using OrderApi.Core.Converters;
 using OrderApi.Core.Models;
 using OrderApi.Core.Services;
 using OrderApi.Domain.Converters;
@@ -26,7 +27,7 @@ builder.Services.AddScoped<IOrderService, OrderService>();
 // Register converters for dependency injection
 builder.Services.AddSingleton<IConverter<Order, OrderDto>, OrderConverter>();
 builder.Services.AddSingleton<IConverter<OrderStatus, OrderStatusDto>, OrderStatusConverter>();
-builder.Services.AddSingleton<IConverter<OrderLine, OrderLineDto>, OrderLineConverter>();
+builder.Services.AddSingleton<IOrderLineConverter, OrderLineConverter>();
 
 // Register database initializer for dependency injection
 builder.Services.AddTransient<IDbInitializer, DbInitializer>();

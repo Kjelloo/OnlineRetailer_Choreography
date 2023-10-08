@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using OrderApi.Core.Models;
+using OrderApi.Core.Models.Dtos;
 using OrderApi.Core.Services;
 using SharedModels;
 using SharedModels.Order.Dtos;
@@ -21,10 +22,19 @@ public class OrdersController : ControllerBase
 
     // POST orders
     [HttpPost]
-    public IActionResult Post([FromBody] Order order)
+    public IActionResult Post([FromBody] OrderCreateDto orderCreateDto)
     {
-        if (order == null) return BadRequest();
+        if (orderCreateDto == null) return BadRequest();
 
+        var orderLines = orderCreateDto.OrderLines.Select(orderLine => 
+            new OrderLine { ProductId = orderLine.ProductId, Quantity = orderLine.Quantity }).ToList();
+
+        var order = new Order
+        {
+            CustomerId = orderCreateDto.CustomerId,
+            OrderLines = orderLines
+        };
+        
         try
         {
             var newOrder = _service.Add(order);
@@ -43,7 +53,9 @@ public class OrdersController : ControllerBase
     [HttpGet]
     public IActionResult Get()
     {
-        return Ok(_service.GetAll().Select(o => _converter.Convert(o)));
+        var orders = _service.GetAll();
+       
+        return Ok(orders.Select(order => _converter.Convert(order)).ToList());
     }
 
     // GET orders/5
@@ -70,34 +82,51 @@ public class OrdersController : ControllerBase
         return Ok(ordersDto);
     }
 
-    // PUT orders/5/cancel
+    // PUT orders/cancel/5
     // This action method cancels an order and publishes an OrderStatusChangedMessage
     // with topic set to "cancelled".
     [HttpPut("cancel/{id}")]
     public IActionResult Cancel(int id)
     {
-        throw new NotImplementedException();
-
-        // Add code to implement this method.
+        try
+        {
+            return Ok("Order cancelled: " + _service.Cancel(id));
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
     }
 
-    // PUT orders/5/ship
+    // PUT orders/ship/5
     // This action method ships an order and publishes an OrderStatusChangedMessage.
     // with topic set to "shipped".
     [HttpPut("ship/{id}")]
     public IActionResult Ship(int id)
     {
-        throw new NotImplementedException();
-        // Add code to implement this method.
+        try
+        {
+            return Ok("Order shipped: " + _service.Ship(id));
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
     }
 
-    // PUT orders/5/pay
+    // PUT orders/pay/5
     // This action method marks an order as paid and publishes a CreditStandingChangedMessage
     // (which have not yet been implemented), if the credit standing changes.
-    [HttpPut("/pay{id}")]
+    [HttpPut("pay/{id}")]
     public IActionResult Pay(int id)
     {
-        throw new NotImplementedException();
-        // Add code to implement this method.
+        try
+        {
+            return Ok("Order paid: " + _service.Pay(id));
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
     }
 }

@@ -6,7 +6,7 @@ namespace OrderApi.Core.Services;
 public interface IOrderService : IService<Order>
 {
     IEnumerable<Order> GetByCustomer(int customerId);
-    Order Cancel();
-    Order Ship();
-    Order Pay();
+    Order Cancel(int id);
+    Order Ship(int id);
+    Order Pay(int id);
 }

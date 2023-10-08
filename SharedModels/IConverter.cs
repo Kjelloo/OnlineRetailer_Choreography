@@ -1,4 +1,7 @@
-﻿namespace SharedModels
+﻿using System.Collections.Generic;
+using SharedModels.Order.Dtos;
+
+namespace SharedModels
 {
     public interface IConverter<T, U>
     {

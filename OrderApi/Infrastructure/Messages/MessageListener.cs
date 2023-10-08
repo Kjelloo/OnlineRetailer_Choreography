@@ -27,7 +27,7 @@ public class MessageListener
     public void Start()
     {
         // Wait for RabbitMQ to start
-        Thread.Sleep(5000);
+        Thread.Sleep(10000);
         using (_bus = RabbitHutch.CreateBus(_connectionString))
         {
             _bus.PubSub.Subscribe<OrderAcceptedMessage>("orderApiHkAccepted",
@@ -46,6 +46,8 @@ public class MessageListener
 
     private void HandleOrderAccepted(OrderAcceptedMessage message)
     {
+        Console.WriteLine("Order accepted message received: " + message.OrderId);
+        
         using var scope = _provider.CreateScope();
         var services = scope.ServiceProvider;
         _orderConverter = services.GetService<IConverter<Order, OrderDto>>();
@@ -57,18 +59,23 @@ public class MessageListener
         order.Status = OrderStatus.WaitingToBeShipped;
         orderRepos.Edit(order);
 
-        var customerOrderAcceptedMessage = new CustomerOrderUpdatedMessage
+        var customerOrderAcceptedMessage = new OrderStatusChangedMessage
         {
             Order = _orderConverter.Convert(order),
-            CustomerId = order.CustomerId
+            CustomerId = order.CustomerId,
+            OrderStatus = OrderStatusDto.WaitingToBeShipped
         };
+        
+        Console.WriteLine("Order accepted message sent: " + message.OrderId);
 
         // Send accept message to customer service
-        _bus.PubSub.Publish(customerOrderAcceptedMessage);
+        _bus.PubSub.Publish(customerOrderAcceptedMessage, x => x.WithTopic("accepted"));
     }
 
     private void HandleOrderRejected(OrderRejectedMessage message)
     {
+        Console.WriteLine("Order rejected message received: " + message.OrderId + " Reason: " + message.Reason);
+        
         using var scope = _provider.CreateScope();
 
         var services = scope.ServiceProvider;
@@ -83,6 +90,8 @@ public class MessageListener
             OrderRejectReason = message.Reason
         };
 
+        Console.WriteLine("Order rejected message sent: " + message.OrderId + " Reason: " + message.Reason);
+        
         // Send reject message to customer service
         _bus.PubSub.Publish(customerOrderRejectedMessage);
 

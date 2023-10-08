@@ -72,7 +72,7 @@ public class CustomersController : ControllerBase
         return Ok(_service.GetAll().Select(c => _converter.Convert(c)));
     }
 
-    [HttpGet("credit/{id}")]
+    [HttpGet("hasMinCredit/{id}")]
     public IActionResult GetCustomerSufficientCredit(int id)
     {
         try

@@ -18,6 +18,8 @@ public class OrderStatusConverter : IConverter<OrderStatus, OrderStatusDto>
                 return OrderStatus.Completed;
             case OrderStatusDto.Tentative:
                 return OrderStatus.Tentative;
+            case OrderStatusDto.Cancelled:
+                return OrderStatus.Cancelled;
         }
 
         return default;
@@ -35,6 +37,8 @@ public class OrderStatusConverter : IConverter<OrderStatus, OrderStatusDto>
                 return OrderStatusDto.Completed;
             case OrderStatus.Tentative:
                 return OrderStatusDto.Tentative;
+            case OrderStatus.Cancelled:
+                return OrderStatusDto.Cancelled;
         }
 
         return default;

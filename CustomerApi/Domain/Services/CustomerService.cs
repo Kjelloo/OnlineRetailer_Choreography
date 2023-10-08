@@ -63,19 +63,25 @@ public class CustomerService : ICustomerService
 
         // If the order was rejected, notify the customer
         if (reason is not null)
+        {
             SendEmail(customer.Email, "Order rejected", $"Your order {order.Id} was rejected because {reason}");
-
+            Console.WriteLine("Email sent to {0}, order {1} was rejected because {2}", customer.Email, order.Id,
+                reason);
+        }
+        
         switch (order.Status)
         {
             case OrderStatusDto.WaitingToBeShipped:
-                SendEmail(customer.Email, "Order received",
-                    $"Your order {order.Id} was received and is being processed");
+                SendEmail(customer.Email, "Order received", $"Your order {order.Id} was received and is being processed");
                 break;
             case OrderStatusDto.Shipped:
                 SendEmail(customer.Email, "Order shipped", $"Your order {order.Id} was shipped");
                 break;
             case OrderStatusDto.Completed:
                 SendEmail(customer.Email, "Order completed", $"Your order {order.Id} was completed");
+                break;
+            case OrderStatusDto.Cancelled:
+                SendEmail(customer.Email, "Order cancelled", $"Your order {order.Id} was cancelled");
                 break;
             case OrderStatusDto.Tentative:
                 break;
@@ -95,7 +101,7 @@ public class CustomerService : ICustomerService
     public IEnumerable<OrderDto> GetCustomerOrders(int customerId)
     {
         var orderRequest = new RestRequest($"customerOrders/{customerId}");
-        var orderResponse = _restClient.GetAsync<IEnumerable<OrderDto>>(orderRequest).Result;
+        var orderResponse = _restClient.GetAsync<IList<OrderDto>>(orderRequest).Result;
 
         return orderResponse!;
     }

@@ -51,6 +51,7 @@ services:
     networks:
       - retailerNetwork
     ports:
+      - "5672:5672"
       - "15673:15672"
 
 networks:
