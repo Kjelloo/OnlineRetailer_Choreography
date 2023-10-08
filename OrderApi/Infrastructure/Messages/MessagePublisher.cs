@@ -36,6 +36,8 @@ public class MessagePublisher : IMessagePublisher, IDisposable
             OrderLines = _orderConverter.Convert(orderLines)
         };
         
+        Console.WriteLine("Publishing message: " + message);
+        
         _bus.PubSub.Publish(message);
     }
 

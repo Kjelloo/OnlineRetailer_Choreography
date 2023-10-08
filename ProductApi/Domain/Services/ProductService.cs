@@ -67,22 +67,16 @@ public class ProductService : IProductService
             orderAccepted = false;
             orderRejected = OrderRejectReason.CustomerDoesNotExist;
         }
-        
-        Console.WriteLine(orderAccepted ? "customer exist": "customer does not exist");
 
         // Check if customer has enough credit
         var customerEnoughCreditRequest = new RestRequest($"hasMinCredit/{orderCreatedMessage.CustomerId}");
         var customerEnoughCreditResponse = _customerClient.GetAsync<bool>(customerEnoughCreditRequest).Result;
-        
-        Console.WriteLine(customerEnoughCreditResponse);
         
         if (!customerEnoughCreditResponse)
         {
             orderAccepted = false;
             orderRejected = OrderRejectReason.CustomerCreditIsNotGoodEnough;
         }
-        
-        Console.WriteLine(orderAccepted ? "customer has enough credit": "customer does not have enough credit");
 
         // Check if customer has outstanding bills
         var customerOutstandingBillsRequest = new RestRequest($"bills/{orderCreatedMessage.CustomerId}");
@@ -93,8 +87,6 @@ public class ProductService : IProductService
             orderAccepted = false;
             orderRejected = OrderRejectReason.CustomerOutstandingBills;
         }
-        
-        Console.WriteLine(orderAccepted ? "customer has no outstanding bills": "customer has outstanding bills");
 
         // Check if product is available
         if (!IsProductAvailable(orderCreatedMessage.OrderLines))
@@ -103,8 +95,6 @@ public class ProductService : IProductService
             orderRejected = OrderRejectReason.InsufficientStock;
         }
         
-        Console.WriteLine(orderAccepted ? "product is available": "product is not available");
-
         return new Dictionary<bool, OrderRejectReason>
         {
             { orderAccepted, orderRejected }
