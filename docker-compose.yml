@@ -2,7 +2,7 @@ version: '3.4'
 
 services:
   productapi:
-    image: ${DOCKER_REGISTRY-}productapi
+    image: kjel0393/productapi
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:80
@@ -17,7 +17,7 @@ services:
       - rabbitmq
 
   orderapi:
-    image: ${DOCKER_REGISTRY-}orderapi
+    image: kjel0393/orderapi
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:80
@@ -32,7 +32,7 @@ services:
       - rabbitmq
 
   customerapi:
-    image: ${DOCKER_REGISTRY-}customerapi
+    image: kjel0393/customerapi
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:80

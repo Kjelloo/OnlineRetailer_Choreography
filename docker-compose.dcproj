@@ -12,4 +12,10 @@
         <None Include="docker-compose.yml"/>
         <None Include=".dockerignore"/>
     </ItemGroup>
+    <ItemGroup>
+      <Content Include="customerapi.yml" />
+      <Content Include="Jenkinsfile" />
+      <Content Include="orderapi.yml" />
+      <Content Include="productapi.yml" />
+    </ItemGroup>
 </Project>
