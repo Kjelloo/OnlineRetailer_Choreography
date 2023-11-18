@@ -58,7 +58,7 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:80
     ports:
-      - "4180-4190:80"
+      - "3080-3082:80"
     networks:
       - retailerNetwork
     build:
