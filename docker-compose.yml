@@ -65,7 +65,7 @@ services:
     volumes:
       - featurehub-h2-data:/db
     ports:
-      - "8085:8888"
+      - "8888:8085"
     networks:
       - retailerNetwork
     
