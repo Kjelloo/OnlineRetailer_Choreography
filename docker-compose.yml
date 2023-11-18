@@ -14,7 +14,7 @@ services:
       context: .
       dockerfile: ProductApi/Dockerfile
     deploy:
-      replicas: 2
+      replicas: 1
     depends_on:
       - rabbitmq
 
@@ -31,7 +31,7 @@ services:
       context: .
       dockerfile: OrderApi/Dockerfile
     deploy:
-      replicas: 2
+      replicas: 1
     depends_on:
       - rabbitmq
 
@@ -48,7 +48,7 @@ services:
       context: .
       dockerfile: CustomerApi/Dockerfile
     deploy:
-      replicas: 2
+      replicas: 1
     depends_on:
       - rabbitmq
 
