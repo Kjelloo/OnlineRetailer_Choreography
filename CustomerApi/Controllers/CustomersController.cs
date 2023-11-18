@@ -1,5 +1,6 @@
 using CustomerApi.Core.Models;
 using CustomerApi.Core.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SharedModels;
 using SharedModels.Customer;
@@ -20,13 +21,13 @@ public class CustomersController : ControllerBase
     }
 
     [HttpPost]
-    public IActionResult Post([FromBody] CustomerDto customerDto)
+    public ActionResult<int> Post([FromBody] CustomerDto customerDto)
     {
         try
         {
             var newCustomer = _service.Add(_converter.Convert(customerDto));
 
-            return Created($"Created customer {newCustomer.Name}", newCustomer);
+            return newCustomer.Id;
         }
         catch (ArgumentException e)
         {
@@ -66,6 +67,7 @@ public class CustomersController : ControllerBase
         }
     }
 
+    [Authorize]
     [HttpGet]
     public IActionResult Get()
     {

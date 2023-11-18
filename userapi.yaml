@@ -1,0 +1,32 @@
+﻿apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: userapi
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: userapi
+  template:
+    metadata:
+      labels:
+        app: userapi
+    spec:
+      containers:
+        - name: userapi
+          image: kjel0393/userapi:latest
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: userapi
+  namespace: default
+spec:
+  type: NodePort
+  selector:
+    app: userapi
+  ports:
+    - port: 80
+      nodePort: 31004

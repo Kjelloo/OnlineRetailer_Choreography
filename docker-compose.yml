@@ -46,6 +46,29 @@ services:
     depends_on:
       - rabbitmq
 
+  userapi:
+    image: kjel0393/userapi
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+    ports:
+      - "4080:80"
+    networks:
+      - retailerNetwork
+    build:
+      context: .
+      dockerfile: UserApi/Dockerfile
+      
+  featurehub:
+    image: featurehub/party-server:latest
+    restart: always
+    volumes:
+      - featurehub-h2-data:/db
+    ports:
+      - "8085:8085"
+    networks:
+      - retailerNetwork
+    
   rabbitmq:
     image: rabbitmq:3-management
     networks:
@@ -56,3 +79,6 @@ services:
 
 networks:
   retailerNetwork:
+    
+volumes:
+  featurehub-h2-data:

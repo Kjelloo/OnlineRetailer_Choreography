@@ -17,5 +17,6 @@
       <Content Include="Jenkinsfile" />
       <Content Include="orderapi.yml" />
       <Content Include="productapi.yml" />
+      <Content Include="userapi.yaml" />
     </ItemGroup>
 </Project>
