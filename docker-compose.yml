@@ -13,6 +13,8 @@ services:
     build:
       context: .
       dockerfile: ProductApi/Dockerfile
+    deploy:
+      replicas: 2
     depends_on:
       - rabbitmq
 
@@ -28,6 +30,8 @@ services:
     build:
       context: .
       dockerfile: OrderApi/Dockerfile
+    deploy:
+      replicas: 2
     depends_on:
       - rabbitmq
 
@@ -43,6 +47,8 @@ services:
     build:
       context: .
       dockerfile: CustomerApi/Dockerfile
+    deploy:
+      replicas: 2
     depends_on:
       - rabbitmq
 
@@ -58,6 +64,8 @@ services:
     build:
       context: .
       dockerfile: UserApi/Dockerfile
+    deploy:
+      replicas: 2
       
   featurehub:
     image: featurehub/party-server:latest
@@ -65,7 +73,7 @@ services:
     volumes:
       - featurehub-h2-data:/db
     ports:
-      - "8888:8085"
+      - "8085:8085"
     networks:
       - retailerNetwork
     
