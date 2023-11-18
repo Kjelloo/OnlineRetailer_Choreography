@@ -18,7 +18,7 @@ public class RegisterController : ControllerBase
     {
         _authService = authService;
         _userService = userService;
-        var config = new EdgeFeatureHubConfig("http://featurehub:8085",
+        var config = new EdgeFeatureHubConfig("http://featurehub:8888",
             "e84d6a9c-9f98-4a3a-bda3-ec8c46b2c5d4/VcLpJlnYsxClpKOQQ7LlTaV3HNWwEAXk3oGNNw6c");
         var fh = config.NewContext().Build().Result;
         
