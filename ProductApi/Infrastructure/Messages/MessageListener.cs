@@ -1,6 +1,7 @@
 ﻿using EasyNetQ;
 using ProductApi.Core.Services;
 using SharedModels.Order.Messages;
+using SharedModels.Product;
 
 namespace ProductApi.Infrastructure.Messages;
 
@@ -28,6 +29,9 @@ public class MessageListener
         {
             _bus.PubSub.Subscribe<OrderCreatedMessage>("productApiHkCreated",
                 HandleOrderCreated);
+            
+            _bus.PubSub.Subscribe<ProductUpdateItemStockMessage>("productApiUpdateItemStock",
+                HandleProductUpdateItemStock);
 
             // Block the thread so that it will not exit and stop subscribing.
             lock (this)
@@ -35,6 +39,22 @@ public class MessageListener
                 Monitor.Wait(this);
             }
         }
+    }
+
+    private void HandleProductUpdateItemStock(ProductUpdateItemStockMessage message)
+    {
+        using var scope = _provider.CreateScope();
+        
+        Console.WriteLine($"ProductApi item update received message for product: {message.ProductId}");
+
+        var services = scope.ServiceProvider;
+        
+        var productService = services.GetService<IProductService>();
+
+        var product = productService.Get(message.ProductId);
+        product.ItemsReserved -= message.Quantity;
+        product.ItemsInStock -= message.Quantity;
+        productService.Edit(product);
     }
 
     private void HandleOrderCreated(OrderCreatedMessage message)

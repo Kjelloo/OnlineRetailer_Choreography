@@ -56,14 +56,14 @@ public class MessageListener
 
         // Mark order as completed
         var order = orderRepos.Get(message.OrderId);
-        order.Status = OrderStatus.WaitingToBeShipped;
+        order.Status = OrderStatus.WaitingToBePaid;
         orderRepos.Edit(order);
 
         var customerOrderAcceptedMessage = new OrderStatusChangedMessage
         {
             Order = _orderConverter.Convert(order),
             CustomerId = order.CustomerId,
-            OrderStatus = OrderStatusDto.WaitingToBeShipped
+            OrderStatus = OrderStatusDto.WaitingToBePaid
         };
         
         Console.WriteLine("Order accepted message sent: " + message.OrderId);

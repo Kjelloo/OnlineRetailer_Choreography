@@ -69,10 +69,21 @@ public class OrderService : IOrderService
     public Order Cancel(int id)
     {
         var order = Get(id);
+
+        switch (order.Status)
+        {
+            case OrderStatus.Shipped:
+                throw new ArgumentException("Cannot cancel a shipped order.");
+            case OrderStatus.Completed:
+                throw new ArgumentException("Cannot cancel a completed order.");
+        }
+        
         order.Status = OrderStatus.Cancelled;
         var updatedOrder = Edit(order);
 
         var orderDto = _orderConverter.Convert(updatedOrder);
+        
+        _messagePublisher.PublishUpdateProductItemsMessage(orderDto);
         
         _messagePublisher.PublishOrderStatusChangedMessage(
             updatedOrder.CustomerId, orderDto, updatedOrder.Status, "cancelled");
@@ -83,6 +94,10 @@ public class OrderService : IOrderService
     public Order Ship(int id)
     {
         var order = Get(id);
+
+        if (order.Status != OrderStatus.WaitingToBeShipped)
+            throw new ArgumentException("Cannot ship an order that is not paid for");
+        
         order.Status = OrderStatus.Shipped;
         var updatedOrder = Edit(order);
         
@@ -97,12 +112,20 @@ public class OrderService : IOrderService
     public Order Pay(int id)
     {
         var order = Get(id);
-        order.Status = OrderStatus.Completed;
+        
+        if (order.Status != OrderStatus.WaitingToBePaid)
+            throw new ArgumentException("Cannot pay an order that is not accepted");
+        
+        order.Status = OrderStatus.WaitingToBeShipped;
         var updatedOrder = Edit(order);
         
+        var orderDto = _orderConverter.Convert(updatedOrder);
+
         _messagePublisher.PublishCustomerCreditStandingChangedMessage(
             updatedOrder.CustomerId, 20);
-
+        
+        _messagePublisher.PublishUpdateProductItemsMessage(orderDto);
+        
         return updatedOrder;
     }
 }

@@ -20,7 +20,7 @@ public class DbInitializer : IDbInitializer
             {
                 Date = DateTime.Today,
                 CustomerId = 1,
-                Status = OrderStatus.WaitingToBeShipped,
+                Status = OrderStatus.WaitingToBePaid,
                 OrderLines = new List<OrderLine>
                 {
                     new() { ProductId = 1, Quantity = 2 }

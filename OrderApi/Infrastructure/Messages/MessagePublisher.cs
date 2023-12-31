@@ -6,6 +6,7 @@ using SharedModels.Customer.Messages;
 using SharedModels.Helpers;
 using SharedModels.Order.Dtos;
 using SharedModels.Order.Messages;
+using SharedModels.Product;
 
 namespace OrderApi.Infrastructure.Messages;
 
@@ -66,5 +67,21 @@ public class MessagePublisher : IMessagePublisher, IDisposable
         Console.WriteLine("Publishing message: " + message);
         
         _bus.PubSub.Publish(message);
+    }
+    
+    public void PublishUpdateProductItemsMessage(OrderDto orderDto)
+    {
+        foreach (var order in orderDto.OrderLines)
+        {
+            var message = new ProductUpdateItemStockMessage
+            {
+                ProductId = order.ProductId,
+                Quantity = order.Quantity
+            };
+            
+            _bus.PubSub.Publish(message);
+            
+            Console.WriteLine("Publishing update item quantity message for product: " + message.ProductId);
+        }
     }
 }
