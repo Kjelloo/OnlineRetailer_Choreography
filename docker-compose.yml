@@ -2,6 +2,7 @@ version: '3.4'
 
 services:
   productapi:
+    container_name: productapi
     image: ${DOCKER_REGISTRY-}productapi
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
@@ -15,8 +16,24 @@ services:
       dockerfile: ProductApi/Dockerfile
     depends_on:
       - rabbitmq
+  
+  productapi-daprd:
+    image: "daprio/daprd:edge"
+    container_name: productapi-daprd
+    command: ["./daprd",
+              "-app-id", "productapi",
+              "-app-port", "80",
+              "-placement-host-address", "dapr-placement:50000",
+              "-components-path", "/components",
+              "-log-level", "debug"]
+    volumes:
+      - "./components/:/components"
+    network_mode: "service:productapi"
+    depends_on:
+      - productapi
 
   orderapi:
+    container_name: orderapi
     image: ${DOCKER_REGISTRY-}orderapi
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
@@ -30,8 +47,25 @@ services:
       dockerfile: OrderApi/Dockerfile
     depends_on:
       - rabbitmq
+  
+  orderapi-daprd:
+    image: "daprio/daprd:edge"
+    container_name: orderapi-daprd
+    command: ["./daprd",
+              "-app-id", "orderapi",
+              "-app-port", "80",
+              "-placement-host-address", "dapr-placement:50000",
+              "-components-path", "/components",
+              "-log-level", "debug"
+    ]
+    volumes:
+        - "./components/:/components"
+    network_mode: "service:orderapi"
+    depends_on:
+      - orderapi
 
   customerapi:
+    container_name: customerapi
     image: ${DOCKER_REGISTRY-}customerapi
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
@@ -45,6 +79,21 @@ services:
       dockerfile: CustomerApi/Dockerfile
     depends_on:
       - rabbitmq
+  
+  customerapi-daprd:
+    image: "daprio/daprd:edge"
+    container_name: customerapi-daprd
+    command: ["./daprd",
+              "-app-id", "customerapi",
+              "-app-port", "80",
+              "-placement-host-address", "dapr-placement:50000",
+              "-components-path", "/components",
+              "-log-level", "debug"]
+    volumes:
+        - "./components/:/components"
+    network_mode: "service:customerapi"
+    depends_on:
+      - customerapi
 
   rabbitmq:
     image: rabbitmq:3-management
@@ -53,6 +102,15 @@ services:
     ports:
       - "5672:5672"
       - "15673:15672"
+  
+  dapr-placement:
+    image: "daprio/dapr:edge"
+    container_name: dapr-placement
+    command: ["./placement",
+              "-port", "50000",
+              "-log-level", "debug"]
+    networks:
+      - retailerNetwork
 
 networks:
   retailerNetwork:

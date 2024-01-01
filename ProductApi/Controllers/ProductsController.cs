@@ -20,10 +20,10 @@ public class ProductsController : ControllerBase
     }
 
     // GET products
-    [HttpGet]
-    public IActionResult Get()
+    [HttpGet(nameof(Get))]
+    public ActionResult<IEnumerable<ProductDto>> Get()
     {
-        var productDtoList = _service.GetAll().Select(product => _productConverter.Convert(product)).ToList();
+        var productDtoList = _service.GetAll().Select(product => _productConverter.Convert(product));
 
         return Ok(productDtoList);
     }

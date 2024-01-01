@@ -50,12 +50,11 @@ public class OrdersController : ControllerBase
     }
 
     // GET orders
-    [HttpGet]
-    public IActionResult Get()
+    [HttpGet(nameof(Get))]
+    public ActionResult<IEnumerable<OrderDto>> Get()
     {
         var orders = _service.GetAll();
-       
-        return Ok(orders.Select(order => _converter.Convert(order)).ToList());
+        return Ok(orders.Select(order => _converter.Convert(order)));
     }
 
     // GET orders/5
@@ -71,7 +70,7 @@ public class OrdersController : ControllerBase
     }
 
     [HttpGet("customerOrders/{customerId}")]
-    public IActionResult GetCustomerOrders(int customerId)
+    public ActionResult<IEnumerable<OrderDto>> GetCustomerOrders(int customerId)
     {
         var orders = _service.GetByCustomer(customerId);
 

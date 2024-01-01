@@ -1,4 +1,5 @@
 using CustomerApi.Core.Models;
+using CustomerApi.Core.Proxies;
 using CustomerApi.Core.Services;
 using Microsoft.AspNetCore.Mvc;
 using SharedModels;
@@ -12,11 +13,13 @@ public class CustomersController : ControllerBase
 {
     private readonly IConverter<Customer, CustomerDto> _converter;
     private readonly ICustomerService _service;
+    private readonly IOrderProxyService _orderProxyService;
 
-    public CustomersController(IConverter<Customer, CustomerDto> converter, ICustomerService service)
+    public CustomersController(IConverter<Customer, CustomerDto> converter, ICustomerService service, IOrderProxyService orderProxyService)
     {
         _converter = converter;
         _service = service;
+        _orderProxyService = orderProxyService;
     }
 
     [HttpPost]
@@ -52,13 +55,11 @@ public class CustomersController : ControllerBase
     }
 
     [HttpGet("orders/{id}")]
-    public IActionResult GetOrdersForCustomer(int id)
+    public async Task<IActionResult> GetOrdersForCustomer(int id)
     {
         try
         {
-            var ordersDto = _service.GetCustomerOrders(id);
-
-            return Ok(ordersDto);
+            return Ok(await _orderProxyService.GetOrdersByCustomerId(id));
         }
         catch (Exception e)
         {
@@ -66,7 +67,7 @@ public class CustomersController : ControllerBase
         }
     }
 
-    [HttpGet]
+    [HttpGet(nameof(Get))]
     public IActionResult Get()
     {
         return Ok(_service.GetAll().Select(c => _converter.Convert(c)));

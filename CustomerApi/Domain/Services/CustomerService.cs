@@ -1,4 +1,5 @@
 ﻿using CustomerApi.Core.Models;
+using CustomerApi.Core.Proxies;
 using CustomerApi.Core.Services;
 using RestSharp;
 using SharedModels;
@@ -10,12 +11,12 @@ namespace CustomerApi.Domain.Services;
 public class CustomerService : ICustomerService
 {
     private readonly IRepository<Customer> _repository;
-    private readonly RestClient _restClient;
+    private readonly IOrderProxyService _proxyService;
 
-    public CustomerService(IRepository<Customer> repository)
+    public CustomerService(IRepository<Customer> repository, IOrderProxyService proxyService)
     {
         _repository = repository;
-        _restClient = new RestClient(RestConnectionHelper.GetOrderUrl());
+        _proxyService = proxyService;
     }
 
     public Customer Add(Customer entity)
@@ -100,10 +101,9 @@ public class CustomerService : ICustomerService
 
     public IEnumerable<OrderDto> GetCustomerOrders(int customerId)
     {
-        var orderRequest = new RestRequest($"customerOrders/{customerId}");
-        var orderResponse = _restClient.GetAsync<IList<OrderDto>>(orderRequest).Result;
+        var orderResponse = _proxyService.GetOrdersByCustomerId(customerId).Result;
 
-        return orderResponse!;
+        return orderResponse;
     }
 
     private void SendEmail(string email, string subject, string body)

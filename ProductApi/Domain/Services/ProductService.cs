@@ -1,4 +1,5 @@
 ﻿using ProductApi.Core.Models;
+using ProductApi.Core.Proxies;
 using ProductApi.Core.Services;
 using RestSharp;
 using SharedModels;
@@ -11,13 +12,13 @@ namespace ProductApi.Domain.Services;
 
 public class ProductService : IProductService
 {
-    private readonly RestClient _customerClient;
     private readonly IRepository<Product> _productRepository;
+    private readonly ICustomerProxyService _customerProxyService;
 
-    public ProductService(IRepository<Product> productRepository)
+    public ProductService(IRepository<Product> productRepository, ICustomerProxyService customerProxyService)
     {
         _productRepository = productRepository;
-        _customerClient = new RestClient(RestConnectionHelper.GetCustomerUrl());
+        _customerProxyService = customerProxyService;
     }
 
     public Product Add(Product product)
@@ -59,9 +60,8 @@ public class ProductService : IProductService
         var orderRejected = OrderRejectReason.Unknown;
 
         // Check if customer exists
-        var customerExistRequest = new RestRequest(orderCreatedMessage.CustomerId.ToString());
-        var customerExistResponse = _customerClient.GetAsync<CustomerDto>(customerExistRequest).Result;
-
+        var customerExistResponse = _customerProxyService.GetCustomer(orderCreatedMessage.CustomerId).Result;
+        
         if (customerExistResponse is null)
         {
             orderAccepted = false;
@@ -69,9 +69,7 @@ public class ProductService : IProductService
         }
 
         // Check if customer has enough credit
-        var customerEnoughCreditRequest = new RestRequest($"hasMinCredit/{orderCreatedMessage.CustomerId}");
-        var customerEnoughCreditResponse = _customerClient.GetAsync<bool>(customerEnoughCreditRequest).Result;
-        
+        var customerEnoughCreditResponse = _customerProxyService.HasMinCredit(orderCreatedMessage.CustomerId).Result;
         if (!customerEnoughCreditResponse)
         {
             orderAccepted = false;
@@ -79,9 +77,7 @@ public class ProductService : IProductService
         }
 
         // Check if customer has outstanding bills
-        var customerOutstandingBillsRequest = new RestRequest($"bills/{orderCreatedMessage.CustomerId}");
-        var customerOutstandingBillsResponse = _customerClient.GetAsync<bool>(customerOutstandingBillsRequest).Result;
-
+        var customerOutstandingBillsResponse = _customerProxyService.HasOutstandingBills(orderCreatedMessage.CustomerId).Result;
         if (!customerOutstandingBillsResponse)
         {
             orderAccepted = false;

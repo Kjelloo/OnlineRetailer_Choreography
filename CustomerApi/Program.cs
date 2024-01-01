@@ -1,7 +1,9 @@
 using CustomerApi.Core.Models;
+using CustomerApi.Core.Proxies;
 using CustomerApi.Core.Services;
 using CustomerApi.Domain.Converters;
 using CustomerApi.Domain.Helpers;
+using CustomerApi.Domain.Proxies;
 using CustomerApi.Domain.Services;
 using CustomerApi.Infrastructure.EfCore;
 using CustomerApi.Infrastructure.EfCore.Repositories;
@@ -25,7 +27,10 @@ builder.Services.AddScoped<ICustomerService, CustomerService>();
 
 builder.Services.AddSingleton<IConverter<Customer, CustomerDto>, CustomerConverter>();
 
-builder.Services.AddControllers();
+builder.Services.AddSingleton<IOrderProxyService, OrderProxyService>();
+
+builder.Services.AddMvc().AddDapr();
+builder.Services.AddControllers().AddDapr();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
