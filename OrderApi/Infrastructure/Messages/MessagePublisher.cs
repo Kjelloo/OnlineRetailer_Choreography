@@ -1,4 +1,5 @@
-﻿using EasyNetQ;
+﻿using Dapr.Client;
+using EasyNetQ;
 using OrderApi.Core.Converters;
 using OrderApi.Core.Models;
 using SharedModels;
@@ -15,6 +16,7 @@ public class MessagePublisher : IMessagePublisher, IDisposable
     private readonly IBus _bus;
     private readonly IOrderLineConverter _orderConverter;
     private readonly IConverter<OrderStatus, OrderStatusDto> _orderStatusConverter;
+    private readonly DaprClient _daprClient = new DaprClientBuilder().Build();
 
     public MessagePublisher(IOrderLineConverter orderConverter, IConverter<OrderStatus, OrderStatusDto> orderStatusConverter)
     {
@@ -37,7 +39,7 @@ public class MessagePublisher : IMessagePublisher, IDisposable
             OrderLines = _orderConverter.Convert(orderLines)
         };
         
-        Console.WriteLine("Publishing message: " + message);
+        Console.WriteLine("Publishing message for order: " + message.OrderId);
         
         _bus.PubSub.Publish(message);
     }
@@ -51,7 +53,7 @@ public class MessagePublisher : IMessagePublisher, IDisposable
             OrderStatus = _orderStatusConverter.Convert(orderStatus)
         };
         
-        Console.WriteLine($"Publishing message: {message} to topic: " + topic);
+        Console.WriteLine($"Publishing message with order: {message.Order.Id} to topic: " + topic);
         
         _bus.PubSub.Publish(message, x => x.WithTopic(topic));
     }

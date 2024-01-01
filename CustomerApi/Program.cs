@@ -52,13 +52,14 @@ using (var scope = app.Services.CreateScope())
     dbInitializer.Initialize(dbContext);
 }
 
-Task.Factory.StartNew(() =>
-    new MessageListener(app.Services, MessageConnectionHelper.ConnectionString).Start());
+// Task.Factory.StartNew(() =>
+//     new MessageListener(app.Services, MessageConnectionHelper.ConnectionString).Start());
 
 // app.UseHttpsRedirection();
 
 app.UseAuthorization();
-
+app.UseCloudEvents();
+app.MapSubscribeHandler();
 app.MapControllers();
 
 app.Run();

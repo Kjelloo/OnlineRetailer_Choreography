@@ -1,0 +1,16 @@
+apiVersion: dapr.io/v1alpha1
+kind: Component
+metadata:
+  name: pubsub
+spec:
+  type: pubsub.rabbitmq
+  version: v1
+  metadata:
+    - name: host
+      value: "amqp://guest:guest@rabbitmq" # Ensure correct AMQP scheme (amqp://)
+    - name: durable
+      value: "true" # This should be enclosed in quotes as well
+scopes:
+  - productapi
+  - orderapi
+  - customerapi

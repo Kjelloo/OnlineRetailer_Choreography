@@ -1,4 +1,5 @@
 ﻿using CustomerApi.Core.Services;
+using Dapr.Client;
 using EasyNetQ;
 using SharedModels.Customer.Messages;
 using SharedModels.Order.Messages;
@@ -10,7 +11,7 @@ public class MessageListener
     private readonly string _connectionString;
     private readonly IServiceProvider _provider;
     private IBus _bus;
-
+    
     public MessageListener(IServiceProvider provider, string connectionString)
     {
         _provider = provider;
@@ -21,6 +22,7 @@ public class MessageListener
     {
         // Wait for RabbitMQ to start
         Thread.Sleep(10000);
+        
         using (_bus = RabbitHutch.CreateBus(_connectionString))
         {
             // Handle rejected orders

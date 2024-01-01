@@ -72,6 +72,9 @@ public class CustomerService : ICustomerService
         
         switch (order.Status)
         {
+            case OrderStatusDto.WaitingToBePaid:
+                SendEmail(customer.Email, "Order accepted", $"Your order {order.Id} was accepted");
+                break;
             case OrderStatusDto.WaitingToBeShipped:
                 SendEmail(customer.Email, "Order received", $"Your order {order.Id} was received and is being processed");
                 break;

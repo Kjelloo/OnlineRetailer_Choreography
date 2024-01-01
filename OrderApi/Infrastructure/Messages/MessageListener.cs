@@ -1,4 +1,5 @@
-﻿using EasyNetQ;
+﻿using Dapr.Client;
+using EasyNetQ;
 using OrderApi.Core.Models;
 using OrderApi.Core.Services;
 using SharedModels;
@@ -14,6 +15,7 @@ public class MessageListener
     private readonly IServiceProvider _provider;
     private IBus _bus;
     private IConverter<Order, OrderDto> _orderConverter;
+    private readonly DaprClient _daprClient = new DaprClientBuilder().Build();
 
     // The service provider is passed as a parameter, because the class needs
     // access to the product repository. With the service provider, we can create
@@ -44,7 +46,7 @@ public class MessageListener
         }
     }
 
-    private void HandleOrderAccepted(OrderAcceptedMessage message)
+    private async void HandleOrderAccepted(OrderAcceptedMessage message)
     {
         Console.WriteLine("Order accepted message received: " + message.OrderId);
         
@@ -68,8 +70,9 @@ public class MessageListener
         
         Console.WriteLine("Order accepted message sent: " + message.OrderId);
 
+        await _daprClient.PublishEventAsync("pubsub", "customerApiOrderAccepted", customerOrderAcceptedMessage);
         // Send accept message to customer service
-        _bus.PubSub.Publish(customerOrderAcceptedMessage, x => x.WithTopic("accepted"));
+        // _bus.PubSub.Publish(customerOrderAcceptedMessage, x => x.WithTopic("accepted"));
     }
 
     private void HandleOrderRejected(OrderRejectedMessage message)
