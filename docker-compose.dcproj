@@ -11,6 +11,7 @@
     <ItemGroup>
         <None Include="docker-compose.yml"/>
         <None Include=".dockerignore"/>
+        <None Include="prometheus.yml" />
     </ItemGroup>
     <ItemGroup>
       <Folder Include="components\" />

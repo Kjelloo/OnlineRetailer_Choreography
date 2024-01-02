@@ -8,6 +8,7 @@ using CustomerApi.Domain.Services;
 using CustomerApi.Infrastructure.EfCore;
 using CustomerApi.Infrastructure.EfCore.Repositories;
 using Microsoft.EntityFrameworkCore;
+using Prometheus;
 using SharedModels;
 using SharedModels.Customer;
 
@@ -55,8 +56,10 @@ using (var scope = app.Services.CreateScope())
 
 // app.UseHttpsRedirection();
 
+app.UseHttpMetrics();
 app.UseAuthorization();
 app.UseCloudEvents();
+app.MapMetrics();
 app.MapSubscribeHandler();
 app.MapControllers();
 

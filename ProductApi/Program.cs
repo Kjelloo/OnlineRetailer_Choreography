@@ -8,6 +8,7 @@ using ProductApi.Domain.Proxies;
 using ProductApi.Domain.Services;
 using ProductApi.Infrastructure.EfCore;
 using ProductApi.Infrastructure.EfCore.Repositories;
+using Prometheus;
 using SharedModels;
 using SharedModels.Product;
 
@@ -60,8 +61,10 @@ using (var scope = app.Services.CreateScope())
 
 //app.UseHttpsRedirection();
 
+app.UseHttpMetrics();
 app.UseAuthorization();
 app.UseCloudEvents();
+app.MapMetrics();
 app.MapSubscribeHandler();
 app.MapControllers();
 

@@ -9,6 +9,7 @@ using OrderApi.Domain.Services;
 using OrderApi.Infrastructure.EfCore;
 using OrderApi.Infrastructure.EfCore.Repositories;
 using OrderApi.Infrastructure.Messages;
+using Prometheus;
 using SharedModels;
 using SharedModels.Helpers;
 using SharedModels.Order.Dtos;
@@ -67,8 +68,10 @@ using (var scope = app.Services.CreateScope())
 
 //app.UseHttpsRedirection();
 
+app.UseHttpMetrics();
 app.UseAuthorization();
 app.UseCloudEvents();
+app.MapMetrics();
 app.MapSubscribeHandler();
 app.MapControllers();
 

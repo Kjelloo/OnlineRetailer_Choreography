@@ -6,14 +6,14 @@ namespace ProductApi.Domain.Proxies;
 
 public class CustomerProxyService : ICustomerProxyService
 {
-    private readonly DaprClient _httpClient = new DaprClientBuilder().Build();
+    private readonly DaprClient _daprClient = new DaprClientBuilder().Build();
     
     public Task<CustomerDto> GetCustomer(int customerId)
     {
         try
         {
-            var daprRequest = _httpClient.CreateInvokeMethodRequest(HttpMethod.Get, "customerapi", "Customers/" + customerId);
-            var result = _httpClient.InvokeMethodAsync<CustomerDto>(daprRequest);
+            var daprRequest = _daprClient.CreateInvokeMethodRequest(HttpMethod.Get, "customerapi", "Customers/" + customerId);
+            var result = _daprClient.InvokeMethodAsync<CustomerDto>(daprRequest);
 
             return result;
         }
@@ -28,8 +28,8 @@ public class CustomerProxyService : ICustomerProxyService
     {
         try
         {
-            var daprRequest = _httpClient.CreateInvokeMethodRequest(HttpMethod.Get, "customerapi", "Customers/hasMinCredit/" + customerId);
-            var result = _httpClient.InvokeMethodAsync<bool>(daprRequest);
+            var daprRequest = _daprClient.CreateInvokeMethodRequest(HttpMethod.Get, "customerapi", "Customers/hasMinCredit/" + customerId);
+            var result = _daprClient.InvokeMethodAsync<bool>(daprRequest);
 
             return result;
         }
@@ -44,8 +44,8 @@ public class CustomerProxyService : ICustomerProxyService
     {
         try
         {
-            var daprRequest = _httpClient.CreateInvokeMethodRequest(HttpMethod.Get, "customerapi", "Customers/bills/" + customerId);
-            var result = _httpClient.InvokeMethodAsync<bool>(daprRequest);
+            var daprRequest = _daprClient.CreateInvokeMethodRequest(HttpMethod.Get, "customerapi", "Customers/bills/" + customerId);
+            var result = _daprClient.InvokeMethodAsync<bool>(daprRequest);
 
             return result;
         }

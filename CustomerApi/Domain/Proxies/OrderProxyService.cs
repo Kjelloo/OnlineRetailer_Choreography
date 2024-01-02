@@ -1,5 +1,8 @@
-﻿using CustomerApi.Core.Proxies;
+﻿using System.Threading.Channels;
+using CustomerApi.Core.Proxies;
 using Dapr.Client;
+using Grpc.Core;
+using Grpc.Net.Client;
 using SharedModels.Order.Dtos;
 
 namespace CustomerApi.Domain.Proxies;
