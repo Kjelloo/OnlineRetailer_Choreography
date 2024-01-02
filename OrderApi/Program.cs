@@ -35,6 +35,8 @@ builder.Services.AddTransient<IDbInitializer, DbInitializer>();
 // Register MessagePublisher (a messaging gateway) for dependency injection
 builder.Services.AddSingleton<IMessagePublisher, MessagePublisher>();
 
+builder.Services.AddMvc().AddDapr();
+builder.Services.AddControllers().AddDapr();
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -60,13 +62,14 @@ using (var scope = app.Services.CreateScope())
 
 // Create a message listener in a separate thread.
 
-Task.Factory.StartNew(() =>
-    new MessageListener(app.Services, MessageConnectionHelper.ConnectionString).Start());
+// Task.Factory.StartNew(() =>
+//     new MessageListener(app.Services, MessageConnectionHelper.ConnectionString).Start());
 
 //app.UseHttpsRedirection();
 
 app.UseAuthorization();
-
+app.UseCloudEvents();
+app.MapSubscribeHandler();
 app.MapControllers();
 
 app.Run();

@@ -8,9 +8,7 @@ using ProductApi.Domain.Proxies;
 using ProductApi.Domain.Services;
 using ProductApi.Infrastructure.EfCore;
 using ProductApi.Infrastructure.EfCore.Repositories;
-using ProductApi.Infrastructure.Messages;
 using SharedModels;
-using SharedModels.Helpers;
 using SharedModels.Product;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -57,13 +55,14 @@ using (var scope = app.Services.CreateScope())
 }
 
 // Create a message listener in a separate thread.
-Task.Factory.StartNew(() =>
-    new MessageListener(app.Services, MessageConnectionHelper.ConnectionString).Start());
+// Task.Factory.StartNew(() =>
+//     new MessageListener(app.Services, MessageConnectionHelper.ConnectionString).Start());
 
 //app.UseHttpsRedirection();
 
 app.UseAuthorization();
-
+app.UseCloudEvents();
+app.MapSubscribeHandler();
 app.MapControllers();
 
 app.Run();

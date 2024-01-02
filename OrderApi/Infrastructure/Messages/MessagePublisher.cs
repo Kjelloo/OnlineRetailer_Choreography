@@ -1,36 +1,27 @@
 ﻿using Dapr.Client;
-using EasyNetQ;
 using OrderApi.Core.Converters;
 using OrderApi.Core.Models;
 using SharedModels;
 using SharedModels.Customer.Messages;
-using SharedModels.Helpers;
 using SharedModels.Order.Dtos;
 using SharedModels.Order.Messages;
 using SharedModels.Product;
 
 namespace OrderApi.Infrastructure.Messages;
 
-public class MessagePublisher : IMessagePublisher, IDisposable
+public class MessagePublisher : IMessagePublisher
 {
-    private readonly IBus _bus;
     private readonly IOrderLineConverter _orderConverter;
     private readonly IConverter<OrderStatus, OrderStatusDto> _orderStatusConverter;
     private readonly DaprClient _daprClient = new DaprClientBuilder().Build();
 
     public MessagePublisher(IOrderLineConverter orderConverter, IConverter<OrderStatus, OrderStatusDto> orderStatusConverter)
     {
-        _bus = RabbitHutch.CreateBus(MessageConnectionHelper.ConnectionString);
         _orderConverter = orderConverter;
         _orderStatusConverter = orderStatusConverter;
     }
 
-    public void Dispose()
-    {
-        _bus.Dispose();
-    }
-
-    public void PublishOrderCreatedMessage(int customerId, int orderId, IList<OrderLine> orderLines)
+    public async void PublishOrderCreatedMessage(int customerId, int orderId, IList<OrderLine> orderLines)
     {
         var message = new OrderCreatedMessage
         {
@@ -38,13 +29,14 @@ public class MessagePublisher : IMessagePublisher, IDisposable
             OrderId = orderId,
             OrderLines = _orderConverter.Convert(orderLines)
         };
-        
+
+        await _daprClient.PublishEventAsync("pubsub", "productApiOrderCreated", message);
         Console.WriteLine("Publishing message for order: " + message.OrderId);
         
-        _bus.PubSub.Publish(message);
+        // _bus.PubSub.Publish(message);
     }
 
-    public void PublishOrderStatusChangedMessage(int customerId, OrderDto order, OrderStatus orderStatus, string topic)
+    public async void PublishOrderStatusChangedMessage(int customerId, OrderDto order, OrderStatus orderStatus, string topic)
     {
         var message = new OrderStatusChangedMessage
         {
@@ -53,12 +45,13 @@ public class MessagePublisher : IMessagePublisher, IDisposable
             OrderStatus = _orderStatusConverter.Convert(orderStatus)
         };
         
-        Console.WriteLine($"Publishing message with order: {message.Order.Id} to topic: " + topic);
+        await _daprClient.PublishEventAsync("pubsub", topic, message);
         
-        _bus.PubSub.Publish(message, x => x.WithTopic(topic));
+        Console.WriteLine($"Publishing message with order: {message.Order.Id} to topic: " + topic);
+        // _bus.PubSub.Publish(message, x => x.WithTopic(topic));
     }
 
-    public void PublishCustomerCreditStandingChangedMessage(int customerId, int newCredit)
+    public async void PublishCustomerCreditStandingChangedMessage(int customerId, int newCredit)
     {
         var message = new CustomerCreditStandingChangedMessage
         {
@@ -66,12 +59,13 @@ public class MessagePublisher : IMessagePublisher, IDisposable
             Credit = newCredit
         };
         
-        Console.WriteLine("Publishing message: " + message);
+        // _bus.PubSub.Publish(message);
+        await _daprClient.PublishEventAsync("pubsub", "customerApiCreditStandingChanged", message);
         
-        _bus.PubSub.Publish(message);
+        Console.WriteLine("Publishing message for customer credit changed: " + message.CustomerId);
     }
     
-    public void PublishUpdateProductItemsMessage(OrderDto orderDto)
+    public async void PublishUpdateProductItemsMessage(OrderDto orderDto)
     {
         foreach (var order in orderDto.OrderLines)
         {
@@ -81,7 +75,8 @@ public class MessagePublisher : IMessagePublisher, IDisposable
                 Quantity = order.Quantity
             };
             
-            _bus.PubSub.Publish(message);
+            // _bus.PubSub.Publish(message);
+            await _daprClient.PublishEventAsync("pubsub", "productApiUpdateItemStock", message);
             
             Console.WriteLine("Publishing update item quantity message for product: " + message.ProductId);
         }

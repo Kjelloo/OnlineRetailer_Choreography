@@ -43,7 +43,7 @@ public class OrderRepository : IOrderRepository
 
     public Order Remove(Order entity)
     {
-        var order = db.Orders.FirstOrDefault(entity);
+        var order = db.Orders.FirstOrDefault(o => o.Id == entity.Id);
         db.Orders.Remove(order);
         db.SaveChanges();
         return order;

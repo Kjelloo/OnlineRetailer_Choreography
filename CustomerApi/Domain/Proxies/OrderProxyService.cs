@@ -1,7 +1,5 @@
 ﻿using CustomerApi.Core.Proxies;
 using Dapr.Client;
-using Microsoft.Extensions.Http;
-using Newtonsoft.Json;
 using SharedModels.Order.Dtos;
 
 namespace CustomerApi.Domain.Proxies;

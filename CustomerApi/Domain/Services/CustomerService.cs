@@ -1,9 +1,7 @@
 ﻿using CustomerApi.Core.Models;
 using CustomerApi.Core.Proxies;
 using CustomerApi.Core.Services;
-using RestSharp;
 using SharedModels;
-using SharedModels.Helpers;
 using SharedModels.Order.Dtos;
 
 namespace CustomerApi.Domain.Services;
@@ -66,8 +64,6 @@ public class CustomerService : ICustomerService
         if (reason is not null)
         {
             SendEmail(customer.Email, "Order rejected", $"Your order {order.Id} was rejected because {reason}");
-            Console.WriteLine("Email sent to {0}, order {1} was rejected because {2}", customer.Email, order.Id,
-                reason);
         }
         
         switch (order.Status)
@@ -109,9 +105,9 @@ public class CustomerService : ICustomerService
         return orderResponse;
     }
 
-    private void SendEmail(string email, string subject, string body)
+    private static void SendEmail(string email, string subject, string body)
     {
         // Implement email sending
-        Console.WriteLine("Sending email to {0} with subject {1} and body {2}", email, subject, body);
+        Console.WriteLine("Sending email to {0} \nSubject: {1} \nBody: {2}", email, subject, body);
     }
 }

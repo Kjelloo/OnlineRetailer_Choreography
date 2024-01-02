@@ -1,10 +1,7 @@
 ﻿using ProductApi.Core.Models;
 using ProductApi.Core.Proxies;
 using ProductApi.Core.Services;
-using RestSharp;
 using SharedModels;
-using SharedModels.Customer;
-using SharedModels.Helpers;
 using SharedModels.Order.Dtos;
 using SharedModels.Order.Messages;
 

@@ -66,6 +66,31 @@ public class OrderService : IOrderService
         return _repository.GetByCustomer(customerId);
     }
 
+    public Order AcceptOrder(int id)
+    {
+        var order = Get(id);
+
+        if (order.Status != OrderStatus.Tentative)
+            throw new ArgumentException("Cannot accept an order that is not tentative");
+        
+        order.Status = OrderStatus.WaitingToBePaid;
+        Edit(order);
+        
+        return order;
+    }
+
+    public Order RejectOrder(int id, OrderRejectReason reason)
+    {
+        var order = Get(id);
+
+        if (order.Status != OrderStatus.Tentative)
+            throw new ArgumentException("Cannot reject an order that is not tentative");
+
+        Remove(order);
+        
+        return Remove(order);
+    }
+
     public Order Cancel(int id)
     {
         var order = Get(id);
@@ -86,7 +111,7 @@ public class OrderService : IOrderService
         _messagePublisher.PublishUpdateProductItemsMessage(orderDto);
         
         _messagePublisher.PublishOrderStatusChangedMessage(
-            updatedOrder.CustomerId, orderDto, updatedOrder.Status, "cancelled");
+            updatedOrder.CustomerId, orderDto, updatedOrder.Status, "customerApiOrderCancelled");
 
         return updatedOrder;
     }
@@ -104,7 +129,7 @@ public class OrderService : IOrderService
         var orderDto = _orderConverter.Convert(updatedOrder);
         
         _messagePublisher.PublishOrderStatusChangedMessage(
-            updatedOrder.CustomerId, orderDto, updatedOrder.Status, "shipped");
+            updatedOrder.CustomerId, orderDto, updatedOrder.Status, "customerApiOrderShipped");
 
         return updatedOrder;
     }

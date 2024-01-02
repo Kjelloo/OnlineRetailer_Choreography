@@ -7,11 +7,9 @@ using CustomerApi.Domain.Proxies;
 using CustomerApi.Domain.Services;
 using CustomerApi.Infrastructure.EfCore;
 using CustomerApi.Infrastructure.EfCore.Repositories;
-using CustomerApi.Infrastructure.Messages;
 using Microsoft.EntityFrameworkCore;
 using SharedModels;
 using SharedModels.Customer;
-using SharedModels.Helpers;
 
 var builder = WebApplication.CreateBuilder(args);
 

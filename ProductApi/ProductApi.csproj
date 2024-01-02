@@ -18,9 +18,8 @@
         <PackageReference Include="Dapr.AspNetCore" Version="1.12.0" />
         <PackageReference Include="Dapr.Client" Version="1.12.0" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="7.0.11"/>
-        <PackageReference Include="EasyNetQ" Version="7.5.5"/>
+        <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="7.0.11" />
         <PackageReference Include="Newtonsoft.Json" Version="13.0.3"/>
-        <PackageReference Include="RestSharp" Version="110.2.0"/>
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0"/>
     </ItemGroup>
     <ItemGroup>

@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using CustomerApi.Core.Services;
 using Dapr;
 using Microsoft.AspNetCore.Mvc;
@@ -34,49 +30,41 @@ public class CustomersMessagesController : ControllerBase
     
     [Topic("pubsub", "customerApiOrderAccepted")]
     [HttpPost("orderAccepted")]
-    public IActionResult OrderAccepted(OrderStatusChangedMessage message)
+    public void OrderAccepted(OrderStatusChangedMessage message)
     {
-        Console.WriteLine("Order accepted message received: " + message.Order.Id);
+        Console.WriteLine("Order accepted message received for order: " + message.Order.Id);
         
         _customerService.NotifyCustomer(message.CustomerId, message.Order, null);
-        
-        return Ok();
     }
     
     [Topic("pubsub", "customerApiOrderShipped")]
     [HttpPost("orderShipped")]
-    public IActionResult OrderShipped(OrderStatusChangedMessage message)
+    public void OrderShipped(OrderStatusChangedMessage message)
     {
-        Console.WriteLine("Order shipped message received: " + message.Order.Id);
+        Console.WriteLine("Order shipped message received for order: " + message.Order.Id);
         
         _customerService.NotifyCustomer(message.CustomerId, message.Order, null);
-        
-        return Ok();
     }
     
     [Topic("pubsub", "customerApiOrderCancelled")]
     [HttpPost("orderCancelled")]
-    public IActionResult OrderCancelled(OrderStatusChangedMessage message)
+    public void OrderCancelled(OrderStatusChangedMessage message)
     {
-        Console.WriteLine("Order cancelled message received: " + message.Order.Id);
+        Console.WriteLine("Order cancelled message received for order: " + message.Order.Id);
         
         _customerService.NotifyCustomer(message.CustomerId, message.Order, null);
-        
-        return Ok();
     }
     
     [Topic("pubsub", "customerApiCreditStandingChanged")]
     [HttpPost("creditStandingChanged")]
-    public IActionResult CreditStandingChanged(CustomerCreditStandingChangedMessage message)
+    public void CreditStandingChanged(CustomerCreditStandingChangedMessage message)
     {
-        Console.WriteLine("Credit standing changed message received: " + message.CustomerId);
+        Console.WriteLine("Credit standing changed message received for order: " + message.CustomerId);
         
         var customer = _customerService.Get(message.CustomerId);
         
         // Add credit to customer
         customer.CreditStanding += message.Credit;
         _customerService.Edit(customer);
-        
-        return Ok();
     }
 }
